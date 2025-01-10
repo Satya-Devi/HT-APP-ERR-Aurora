@@ -1,0 +1,13 @@
+.slick-list {
+    padding: 0 !important;  /* Resets the padding of the slick list */
+}
+  
+.slick-slide {
+  padding: 0 !important;  /* Resets the padding of each slick slide */
+}
+
+@media (max-width: $mantine-breakpoint-xs) {
+  .hide-mobile {
+    display: none;
+  }
+}
