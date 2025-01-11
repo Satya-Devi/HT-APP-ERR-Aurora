@@ -1,4 +1,5 @@
 "use client";
+
 import { JobData } from "@/utils/interface";
 import {
   Badge,
@@ -22,7 +23,7 @@ import { notifications } from "@mantine/notifications";
 import { useState, useEffect } from "react";
 import UnsaveJobButton from "../UnsaveJobButton/UnsaveJobButton";
 import { useMediaQuery } from "@mantine/hooks";
-import Image from "next/image"; //mantine images are not working on firefox so keep this
+import Image from "next/image";
 import JobCardSmallMobile from "./JobCardSmallMobile";
 import { useRouter } from "next/navigation";
 import { CardImage } from "../CardImage/CardImage";
@@ -48,16 +49,12 @@ const temp: JobData = {
   solution_area: "Data & AI",
   brief_summary: "",
 };
-
-const JobCardSmall = ({
-  job = temp,
-  userId,
-  isTracker = false,
-}: JobCardSmallProps) => {
+const JobCardSmall = ({ job = temp, userId, isTracker = false }: JobCardSmallProps) => {
   const [company_logo, setCompanyLogo] = useState(job.employer_logo);
   const [isSaved, setIsSaved] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const isMobile = useMediaQuery("(max-width: 1024px)");
-  const router=useRouter();
+  const router = useRouter();
 
   useEffect(() => {
     const savedJobs = JSON.parse(localStorage.getItem("savedJobs") || "[]");
@@ -66,12 +63,8 @@ const JobCardSmall = ({
     }
   }, [job.id]);
 
-  // const handleClick = () => {
-  //   window.location.href = "/jobs/" + job.id;
-  // };
-
   const isHotJob = () => {
-    let skils = [
+    let skills = [
       "Data and AI",
       "Security",
       "Modern Work",
@@ -81,7 +74,7 @@ const JobCardSmall = ({
     ];
     if (
       job.solution_area &&
-      skils.includes(job.solution_area) &&
+      skills.includes(job.solution_area) &&
       moment().diff(moment(job.created_at), "days") <= 8
     ) {
       return true;
@@ -89,64 +82,77 @@ const JobCardSmall = ({
     return false;
   };
 
-  const handleSaveJob = async (event: React.MouseEvent<HTMLElement>) => {
+  const handleSaveJob = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
     event.preventDefault();
-    try {
-      if (!userId) {
-        return (window.location.href = "/login");
-      }
-      await saveJob(userId, job);
-      setIsSaved(true);
-      const savedJobs = JSON.parse(localStorage.getItem("savedJobs") || "[]");
-      localStorage.setItem("savedJobs", JSON.stringify([...savedJobs, job.id]));
-      notifications.show({
-        title: "Job saved!",
-        message: "The job has been saved successfully!",
-        color: "green",
-      });
-    } catch (err) {
-      notifications.show({
-        title: "Oops...",
-        message: "Unable to save the job. Please try again later.",
-        color: "red",
-      });
+    
+    if (!userId) {
+      window.location.href = "/login";
+      return;
     }
+
+    setIsLoading(true);
+    saveJob(userId, job)
+      .then(() => {
+        setIsSaved(true);
+        const savedJobs = JSON.parse(localStorage.getItem("savedJobs") || "[]");
+        localStorage.setItem("savedJobs", JSON.stringify([...savedJobs, job.id]));
+        notifications.show({
+          title: "Job saved!",
+          message: "The job has been saved successfully!",
+          color: "green",
+        });
+      })
+      .catch(() => {
+        notifications.show({
+          title: "Oops...",
+          message: "Unable to save the job. Please try again later.",
+          color: "red",
+        });
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
-
-  const handleUnsaveJob = async (event: React.MouseEvent<HTMLElement>) => {
+  const handleUnsaveJob = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
     event.preventDefault();
-    try {
-      if (!userId) {
-        return (window.location.href = "/login");
-      }
-      await unsaveJob(userId, job.id);
-      setIsSaved(false);
-
-      const savedJobs = JSON.parse(
-        localStorage.getItem("savedJobs") || "[]"
-      ).filter((id: string) => id !== job.id);
-      localStorage.setItem("savedJobs", JSON.stringify(savedJobs));
-
-      notifications.show({
-        title: "Job removed",
-        message: "The job has been removed from your saved jobs.",
-        color: "green",
-      });
-    } catch (err) {
-      notifications.show({
-        title: "Oops...",
-        message: "Unable to remove the job. Please try again later.",
-        color: "red",
-      });
+    
+    if (!userId) {
+      window.location.href = "/login";
+      return;
     }
+
+    setIsLoading(true);
+    unsaveJob(userId, job.id)
+      .then(() => {
+        setIsSaved(false);
+        const savedJobs = JSON.parse(localStorage.getItem("savedJobs") || "[]")
+          .filter((id: string) => id !== job.id);
+        localStorage.setItem("savedJobs", JSON.stringify(savedJobs));
+        notifications.show({
+          title: "Job removed",
+          message: "The job has been removed from your saved jobs.",
+          color: "green",
+        });
+      })
+      .catch(() => {
+        notifications.show({
+          title: "Oops...",
+          message: "Unable to remove the job. Please try again later.",
+          color: "red",
+        });
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const handleJobClick = () => {
     router.push(`/jobs/${job.id}`);
-  }
+  };
+
   return (
     <>
       {isMobile ? (

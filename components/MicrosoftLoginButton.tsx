@@ -2,31 +2,37 @@
 
 import { createClient } from "@/utils/supabase/client";
 import { Button } from "@mantine/core";
+import { useState } from "react";
 import Image from "next/image";
 
-export default function MicrosoftLoginButton() {
-  const handleLoginWithMicrosoft = async () => {
-    try {
-            const supabase = createClient();
-            const { data, error } = await supabase.auth.signInWithOAuth({
-              provider: 'azure',
-              options: {
-                scopes: 'email openid profile User.Read',
-                redirectTo: process.env.NEXT_PUBLIC_REDIRECTIONTO,
-                // redirectTo: "http://localhost:3000/"
-              },
-            });
+export default function MicrosoftLoginButton({ role }: { role?: string }) {
+  const [isLoading, setIsLoading] = useState(false);
 
-            console.log("Data:", data);
-      
-            if (error) {
-              console.error("Error signing in:", error);
-            } else {
-              console.log("Signed in successfully:", data);
-            }
-          } catch (error) {
-            console.error("Login error:", error);
-          }
+  const handleLoginWithMicrosoft = () => {
+    setIsLoading(true);
+    const supabase = createClient();
+    
+    supabase.auth.signInWithOAuth({
+      provider: 'azure',
+      options: {
+        scopes: 'email openid profile User.Read',
+        redirectTo: process.env.NEXT_PUBLIC_REDIRECTIONTO,
+        // redirectTo: "http://localhost:3000/"
+      },
+    })
+      .then(({ data, error }) => {
+        if (error) {
+          console.error("Error signing in:", error);
+          return;
+        }
+        console.log("Signed in successfully:", data);
+      })
+      .catch(error => {
+        console.error("Login error:", error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -42,6 +48,7 @@ export default function MicrosoftLoginButton() {
           },
         },
       })}
+      disabled={isLoading}
     >
       <Image
         src="/images/icons/microsoft.svg"
@@ -50,5 +57,5 @@ export default function MicrosoftLoginButton() {
         height={24}
       />
     </Button>
-  )
+  );
 }
