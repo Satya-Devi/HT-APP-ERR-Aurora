@@ -22,18 +22,26 @@ export default function ChatHero() {
   const router = useRouter();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [value, setValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleClick = async () => {
-    try {
-      if (!value.trim()) {
-        alert("Please enter a query before searching.");
-        return;
-      }
-      router.push(`/ai?query=${encodeURIComponent(value.trim())}`);
-    } catch (error) {
-      console.error("Error in handleClick:", error);
-      alert("An error occurred. Please try again.");
+  const handleClick = () => {
+    if (!value.trim()) {
+      alert("Please enter a query before searching.");
+      return;
     }
+
+    setIsLoading(true);
+    Promise.resolve()
+      .then(() => {
+        router.push(`/ai?query=${encodeURIComponent(value.trim())}`);
+      })
+      .catch(error => {
+        console.error("Error in handleClick:", error);
+        alert("An error occurred. Please try again.");
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -98,6 +106,7 @@ export default function ChatHero() {
               size="lg"
               color="#004a93"
               onClick={handleClick}
+              loading={isLoading}
             >
               Search with AI
             </Button>
@@ -113,9 +122,7 @@ export default function ChatHero() {
           radius="md"
           rightSection={<IconChevronRight size={14} />}
           size="lg"
-          onClick={() => {
-            router.push("/jobs");
-          }}
+          onClick={() => router.push("/jobs")}
         >
           Browse our curated list of Microsoft technology jobs.
         </Button>

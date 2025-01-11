@@ -11,112 +11,121 @@ declare global {
   }
 }
 
-export default function GoogleLoginButton() {
+export default function GoogleLoginButton({ role }: { role?: string }) {
   const router = useRouter();
   const supabase = createClient();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleCredentialResponse = async (response: any) => {
-    console.log("Received ID token:", response);
-    try {
-      setIsLoading(true);
-  
-      // Check for ID token presence
-      if (!response.credential) {
-        throw new Error("No ID token received");
-      }
-  
-      // Authenticate with Supabase using the ID token
-      const { data, error } = await supabase.auth.signInWithIdToken({
+  const handleCredentialResponse = (response: any) => {
+    if (!response.credential) {
+      throw new Error("No ID token received");
+    }
+
+    setIsLoading(true);
+
+    supabase.auth
+      .signInWithIdToken({
         provider: "google",
         token: response.credential,
-      });
-  
-      // Handle sign-in error early
-      if (error) {
-        console.error("Authentication error:", error);
-        throw error;
-      }
-  
-      console.log("Sign-in data:", data);
-  
-      const emailCred = data?.user?.email;
-      if (!emailCred) {
-        console.warn("User data is not available");
-        return;
-      }
-  
-      // Check if the user already exists in the users table
-      const { data: userData, error: userError } = await supabase
-        .from("users")
-        .select("id")
-        .eq("email", emailCred)
-        .maybeSingle(); // Use maybeSingle() to handle zero rows gracefully
-  
-      if (userError) {
-        console.error("Error fetching user:", userError);
-        return;
-      }
-  
-      const userDataInfo = data?.session?.user;
-      const userNameMeta = data?.user?.user_metadata;
-  
-      // If user doesn't exist, insert new user
-      if (!userData && userDataInfo && userNameMeta) {
-        const { data: insertData, error: insertError } = await supabase.from("users").insert([
-          {
-            id: userDataInfo.id,
-            email: userDataInfo.email ?? null,
-            password: "google-oauth-placeholder",
-            provider: userDataInfo.app_metadata.provider ?? null,
-            display_name: userNameMeta.name,
-            created_at: new Date().toISOString(),
-          },
-        ]);
-  
-        if (insertError) {
-          console.error("User insertion error:", insertError);
-        } else {
-          console.log("User inserted successfully:", insertData);
+      })
+      .then(({ data, error }) => {
+        if (error) throw error;
+        return { data, emailCred: data?.user?.email };
+      })
+      .then(({ data, emailCred }) => {
+        if (!emailCred) {
+          throw new Error("User data unavailable");
         }
-      }
-  
-      console.log("Signed in successfully:", data);
-      router.push("/jobs");
-    } catch (error) {
-      console.error("Error in sign-in process:", error);
-    } finally {
-      setIsLoading(false);
-    }
+
+        if (role === "Employer") {
+          return handleEmployerData(data, emailCred);
+        }
+        return handleUserData(data, emailCred);
+      })
+      .then(() => {
+        role === "Employer" ? router.push("/overview") : router.push("/jobs");
+      })
+      .catch((error) => {
+        console.error("Sign-in error:", error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
-  
+
+  const handleEmployerData = (data: any, emailCred: string) => {
+    return supabase
+      .from("employer_details")
+      .select("id")
+      .eq("email", emailCred)
+      .maybeSingle()
+      .then(({ data: empData, error }) => {
+        if (error) throw error;
+        if (!empData) {
+          const empInfo = data?.session?.user;
+          const empMeta = data?.user?.user_metadata;
+          return insertEmployerData(empInfo, empMeta);
+        }
+      });
+  };
+
+  const insertEmployerData = (empInfo: any, empMeta: any) => {
+    return supabase.from("employer_details").insert([
+      {
+        id: empInfo.id,
+        email: empInfo.email ?? null,
+        provider: empInfo.app_metadata.provider ?? null,
+        emp_name: empMeta.name,
+        created_at: new Date().toISOString(),
+      },
+    ]);
+  };
+
+  const handleUserData = (data: any, emailCred: string) => {
+    return supabase
+      .from("users")
+      .select("id")
+      .eq("email", emailCred)
+      .maybeSingle()
+      .then(({ data: userData, error }) => {
+        if (error) throw error;
+        if (!userData) {
+          const userInfo = data?.session?.user;
+          const userMeta = data?.user?.user_metadata;
+          return insertUserData(userInfo, userMeta);
+        }
+      });
+  };
+
+  const insertUserData = (userInfo: any, userMeta: any) => {
+    return supabase.from("users").insert([
+      {
+        id: userInfo.id,
+        email: userInfo.email ?? null,
+        password: "google-oauth-placeholder",
+        provider: userInfo.app_metadata.provider ?? null,
+        display_name: userMeta.name,
+        created_at: new Date().toISOString(),
+      },
+    ]);
+  };
 
   useEffect(() => {
-    const loadGoogleScript = () => {
-      const script = document.createElement("script");
-      script.src = "https://accounts.google.com/gsi/client";
-      script.async = true;
-      script.defer = true;
-      document.body.appendChild(script);
-      return script;
-    };
-
-    const script = loadGoogleScript();
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
 
     script.onload = () => {
-      console.log("Google script loaded successfully");
-
-      // Initialize Google One Tap with ID token response handling
       window.google.accounts.id.initialize({
-        client_id: "67210046265-bo0guguu49jnffl6lojhclpu8sqgfs49.apps.googleusercontent.com",
-        scope: "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
+        client_id:
+          "67210046265-bo0guguu49jnffl6lojhclpu8sqgfs49.apps.googleusercontent.com",
+        scope:
+          "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
         callback: handleCredentialResponse,
         cancel_on_tap_outside: false,
       });
-    };
-
-    script.onerror = () => {
-      console.error("Error loading Google script");
     };
 
     return () => {

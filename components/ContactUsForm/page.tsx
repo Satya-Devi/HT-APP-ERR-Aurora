@@ -1,31 +1,26 @@
 "use client";
 
-import {
-  Box,
-  Card,
-  Grid,
-  GridCol,
-  Text,
-} from "@mantine/core";
-import {
-  IconArrowUpRight,
-} from "@tabler/icons-react";
-import React, {useRef, useState} from "react";
+import { Box, Card, Grid, GridCol, Text } from "@mantine/core";
+import { IconArrowUpRight } from "@tabler/icons-react";
+import React, { useRef, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { CardContentCTA } from "../CardContentCTA/CardContentCTA";
 import { SFProRounded } from "@/app/layout";
-import Styles from "./ContactUsForm.module.css"
+import Styles from "./ContactUsForm.module.css";
 import { notifications } from "@mantine/notifications";
 
 interface ContactUsFormProps {
   leftMargin: string;
-  onSubmit?: (data?:any) => {}
+  onSubmit?: (data?: any) => Promise<any>;
 }
 
-const ContactUsForm: React.FC<ContactUsFormProps> = ({ leftMargin,onSubmit }) => {
+const ContactUsForm: React.FC<ContactUsFormProps> = ({
+  leftMargin,
+  onSubmit,
+}) => {
   const recaptchaRef = useRef<ReCAPTCHA>(null);
-  const [token,setToken]=useState<string | null>(null);
-  
+  const [token, setToken] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const formStyle = {
     maxWidth: "344px",
     left: "80px",
@@ -34,36 +29,51 @@ const ContactUsForm: React.FC<ContactUsFormProps> = ({ leftMargin,onSubmit }) =>
     opacity: "0px",
     marginLeft: leftMargin,
   };
-  const handeSubmit = async (event: any) => {
+  const handleSubmit = (event: any) => {
     event.preventDefault();
-    let name = event.target.elements.name.value;
-    let email = event.target.elements.email.value;
-    let message = event.target.elements.message.value;
+    setIsSubmitting(true);
+
+    const name = event.target.elements.name.value;
+    const email = event.target.elements.email.value;
+    const message = event.target.elements.message.value;
+
     if (name && email && message) {
-      console.log(name, email, message);
       if (onSubmit) {
-        await onSubmit({ name, email, message });
-        notifications.show({
-          title: "Form Submitted !",
-          message: "Thank you for contacting us!",
-          color: "green",
-        });
+        Promise.resolve(onSubmit({ name, email, message }))
+          .then(() => {
+            notifications.show({
+              title: "Form Submitted!",
+              message: "Thank you for contacting us!",
+              color: "green",
+            });
+          })
+          .catch((error) => {
+            console.error("Submission error:", error);
+            notifications.show({
+              title: "Submission Failed",
+              message: "Please try again",
+              color: "red",
+            });
+          })
+          .finally(() => {
+            setIsSubmitting(false);
+          });
       }
     } else {
       alert("Please fill all the fields");
+      setIsSubmitting(false);
     }
-  }
+  };
+
   return (
     <>
       <Grid className={SFProRounded.className}>
         <GridCol span={{ base: 12, md: 8 }}>
-          <Text
-            className={Styles.headerText}
-          >
+          <Text className={Styles.headerText}>
             Have questions or feedback? Contact us, and we'll get back to you
             soon!
           </Text>
-          <form onSubmit={handeSubmit} method="post" style={formStyle}>
+          <form onSubmit={handleSubmit} method="post" style={formStyle}>
             <div style={{ marginBottom: "15px" }}>
               <label htmlFor="name" style={labelStyle}>
                 Name
@@ -162,9 +172,7 @@ const ContactUsForm: React.FC<ContactUsFormProps> = ({ leftMargin,onSubmit }) =>
               >
                 GET IN TOUCH
               </Text>
-              <Text mb="xl">
-               Our friendly team is always here to chat.
-              </Text>
+              <Text mb="xl">Our friendly team is always here to chat.</Text>
               <div style={contactInfoStyle}>
                 <div>
                   <Text fw={700} color="#489BE7">
