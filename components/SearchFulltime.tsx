@@ -13,7 +13,7 @@ export default function SearchFulltime() {
   const [fullTime, setFullTime] = useState(true);
 
   const handleSearch = useDebouncedCallback((isChecked: boolean) => {
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(searchParams ?? '');
     if (isChecked === false) {
       params.set("includeFulltime", "false");
     } else {

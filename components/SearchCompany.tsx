@@ -20,7 +20,7 @@ export default function SearchCompany({ placeholder }: SearchProps) {
   const debounceTime = isMobile ? 800 : 300;
 
   const handleSearch = useDebouncedCallback((term: string) => {
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(searchParams?.toString() || "");
     if (term) {
       params.set("company", term);
     } else {
@@ -37,7 +37,7 @@ export default function SearchCompany({ placeholder }: SearchProps) {
       variant="filled"
       leftSection={<IconSearch size={20} />}
       placeholder={placeholder}
-      defaultValue={searchParams.get("company")?.toString()}
+      defaultValue={(searchParams?.get("company") ?? "")?.toString()}
       onChange={(event) => handleSearch(event.currentTarget.value)}
     />
   );
