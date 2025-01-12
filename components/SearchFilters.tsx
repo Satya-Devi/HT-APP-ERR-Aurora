@@ -46,17 +46,16 @@ export default function SearchFilters() {
     setFilterData((prev) => ({ ...prev, includeContractor }));
 
   useEffect(() => {
-    if(searchParams.get("speciality")){
+    if(searchParams?.get("speciality")){
       setFilterData((prev) => ({ ...prev, speciality: searchParams.get("speciality") || "" }));
     }
-    if(searchParams.get("company")){
+    if(searchParams?.get("company")){
       setFilterData((prev) => ({ ...prev, company: searchParams.get("company") || "" }));
     }
-    if(searchParams.get("location")){
+    if(searchParams?.get("location")){
       setFilterData((prev) => ({ ...prev, location: searchParams.get("location") || "" }));
     }
   }, [searchParams]);
-
 
   return (
     <div >

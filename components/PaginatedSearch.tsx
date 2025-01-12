@@ -16,7 +16,7 @@ type PaginatedSearchProps = {
 export default function PaginatedSearch({
   total,
   itemsPerPage,
-  countOptions=["10", "25", "50"],
+  countOptions = ["10", "25", "50"],
   showJobsText = true,
 }: PaginatedSearchProps) {
   const searchParams = useSearchParams();
@@ -27,12 +27,12 @@ export default function PaginatedSearch({
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   useEffect(() => {
-    const page = parseInt(searchParams.get("page") || "1", 10);
+    const page = parseInt(searchParams?.get("page") || "1", 10);
     setActivePage(page);
   }, [searchParams]);
 
   const handleSearch = useDebouncedCallback((page: number) => {
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(searchParams?.toString() || "");
     if (page > 1) {
       params.set("page", page.toString());
     } else {
@@ -41,8 +41,8 @@ export default function PaginatedSearch({
     replace(`${pathname}?${params.toString()}`);
   }, 300);
 
-  const handleCountChange = useDebouncedCallback((count: any) => {
-    const params = new URLSearchParams(searchParams);
+  const handleCountChange = useDebouncedCallback((count: number) => {
+    const params = new URLSearchParams(searchParams?.toString() || "");
     if (count > 10) {
       params.set("count", count.toString());
     } else {
@@ -61,7 +61,9 @@ export default function PaginatedSearch({
 
     const startPages = [1, 2, 3, 4];
     const endPages = [totalPages - 1, totalPages];
-    return totalPages > 6 ? [...startPages, "...", ...endPages] : [...startPages, ...endPages];
+    return totalPages > 6
+      ? [...startPages, "...", ...endPages]
+      : [...startPages, ...endPages];
   };
 
   return (
@@ -88,8 +90,10 @@ export default function PaginatedSearch({
           w="68"
           mx={4}
           defaultValue={
-            countOptions.includes(searchParams.get("count")||"")?
-            searchParams.get("count"): countOptions[0]
+            searchParams &&
+            countOptions.includes(searchParams.get("count") || "")
+              ? searchParams.get("count")
+              : countOptions[0]
           }
           data={countOptions}
           comboboxProps={{ withinPortal: false }}
@@ -107,13 +111,13 @@ export default function PaginatedSearch({
           setActivePage(page);
           handleSearch(page);
         }}
-        siblings={0} 
-        boundaries={1} 
-        withControls 
+        siblings={0}
+        boundaries={1}
+        withControls
         style={{
           alignSelf: isMobile ? "center" : "flex-end",
           width: isMobile ? "100%" : "auto",
-          whiteSpace: "nowrap", 
+          whiteSpace: "nowrap",
         }}
         getItemProps={(page) => ({
           style: {
@@ -121,13 +125,10 @@ export default function PaginatedSearch({
               visiblePages().includes(page) || page === activePage
                 ? "inline-block"
                 : "none",
-            fontSize: "14px"
+            fontSize: "14px",
           },
         })}
       />
     </Container>
   );
 }
-
-
-

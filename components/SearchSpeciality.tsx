@@ -13,7 +13,7 @@ export default function SearchSpeciality() {
   );
 
   useEffect(() => {
-    const specialityParam = searchParams.get("speciality");
+    const specialityParam = searchParams?.get("speciality");
     if (specialityParam) {
       const decodedSpecialities =
         decodeURIComponent(specialityParam).split(",");
@@ -22,7 +22,9 @@ export default function SearchSpeciality() {
   }, [searchParams]);
 
   const handleSearch = useDebouncedCallback((term: string) => {
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(
+      searchParams ? searchParams.toString() : ""
+    );
     let newSpecialities: string[];
     if (selectedSpecialities.includes(term)) {
       newSpecialities = selectedSpecialities.filter((s) => s !== term);

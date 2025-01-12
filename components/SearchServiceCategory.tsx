@@ -13,7 +13,7 @@ export default function SearchServiceCategory() {
   const [value, setValue] = useState<string | null>("");
 
   const handleSearch = useDebouncedCallback((term: string) => {
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(searchParams?.toString() || "");
     if (term) {
       params.set("careerServiceCategory", term);
     } else {
@@ -22,7 +22,16 @@ export default function SearchServiceCategory() {
     replace(`${pathname}?${params.toString()}`);
   }, 300);
 
-  const uniqueCategories = ["Resume", "Interview", "Courses", "Job Matching", "Tools","Microsoft Recruiters","Tech Recruiters","Certifications & Training"];
+  const uniqueCategories = [
+    "Resume",
+    "Interview",
+    "Courses",
+    "Job Matching",
+    "Tools",
+    "Microsoft Recruiters",
+    "Tech Recruiters",
+    "Certifications & Training",
+  ];
   const categoryOptions = uniqueCategories.map((label) => ({
     value: label.toLowerCase(),
     label,
