@@ -33,6 +33,11 @@ export default function ResetPassword({ searchParams }: Props) {
     setErrorM(false);
     const supabase = createClient();
 
+    if (!supabase) {
+      console.error("Supabase client is not initialized.");
+      return;
+    }
+
     supabase.auth.updateUser({ password })
       .then(({ data, error }) => {
         if (error) {
