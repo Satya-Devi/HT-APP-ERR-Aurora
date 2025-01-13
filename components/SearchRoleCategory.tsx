@@ -14,7 +14,7 @@ export default function SearchRoleCategory() {
   const [value, setValue] = useState<string | null>("");
 
   const handleSearch = useDebouncedCallback((term: string) => {
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(searchParams?.toString() || "");
     if (term) {
       params.set("roleCategory", term);
     } else {

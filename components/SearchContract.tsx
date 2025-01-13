@@ -13,7 +13,7 @@ export default function SearchRoleType() {
   const [contract, setContract] = useState(true);
 
   const handleSearch = useDebouncedCallback((isChecked: boolean) => {
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(searchParams?.toString() || "");
     if (isChecked === false) {
       params.set("includeContractor", "false");
     } else {
