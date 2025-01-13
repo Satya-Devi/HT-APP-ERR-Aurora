@@ -19,29 +19,28 @@ export default function ApplyFiltersButton({filterData,setFilterData,setAppliedF
     const [applied, setApplied] = useState(false);
 
 
-        const disableApply = useMemo(() => {
-            if (!searchParams) return true;
-
-            const speciality = searchParams.get("speciality") ?? "";
-            const company = searchParams.get("company") ?? "";
-            const location = searchParams.get("location") ?? "";
-            const query = searchParams.get("query") ?? "";
-            const remote = searchParams.get("remote") === "true";
-            const includeContractor = searchParams.get("includeContractor") !== "false";
-            const includeFulltime = searchParams.get("includeFulltime") !== "false";
+    const disableApply=useMemo(()=>{
+        let speciality=searchParams.get("speciality")||"";
+        let company=searchParams.get("company")||"";
+        let location=searchParams.get("location")||"";
+        let query=searchParams.get("query")||"";
+        let remote=searchParams.get("remote")=="true"?true:false;
+        let includeContractor=searchParams.get("includeContractor")=="false"?false:true;
+        let includeFulltime=searchParams.get("includeFulltime")==="false"?false:true;
         
-            if (query !== filterData.query) return false;
-            if (speciality !== filterData.speciality) return false;
-            if (company !== filterData.company) return false;
-            if (location !== filterData.location) return false;
-            if (remote !== filterData.remote) return false;
-            if (includeContractor !== filterData.includeContractor) return false;
-            if (includeFulltime !== filterData.includeFulltime) return false;
-            return true;
+        if(query !== filterData.query) return false;
+        if(speciality !== filterData.speciality) return false;
+        if(company !== filterData.company) return false;
+        if(location !== filterData.location) return false;
+        if(remote != filterData.remote)  return false;
+        if(includeContractor != filterData.includeContractor) return false;
+        if(includeFulltime != filterData.includeFulltime) return false;
+        return true;
     
-        }, [filterData, searchParams]);
+    },[filterData, searchParams]);
+
   const handleApply = () => {
-    const params = new URLSearchParams(searchParams?.toString() || "");
+    const params = new URLSearchParams(searchParams);
     if (filterData.speciality && filterData.speciality !== "") {
       params.set("speciality", filterData.speciality);
     } else {

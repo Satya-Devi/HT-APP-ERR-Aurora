@@ -20,7 +20,6 @@ import { Suspense } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "./global.css";
-import ErrorBoundary from "@/components/ErrorBoundary";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -90,7 +89,6 @@ export default function RootLayout({
         {/* <script  src="https://cmp.osano.com/16BafyUO4SDUd2hps/7f1fb6ba-35ea-4e82-8e2b-7c483cffbca3/osano.js"></script> */}
       </head>
       <body style={{ backgroundColor: "#f3f9ff" }}>
-        <ErrorBoundary>
         <Suspense>
           <Firebase />
         </Suspense>
@@ -103,7 +101,6 @@ export default function RootLayout({
           <main>{children}</main>
           <Footer />
         </MantineProvider>
-        </ErrorBoundary>
       </body>
       <StoryblokBridgeLoader options={{}} />
     </html>

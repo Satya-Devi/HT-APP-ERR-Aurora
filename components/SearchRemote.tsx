@@ -13,7 +13,7 @@ export default function SearchRemote() {
   const [checked, setChecked] = useState(false);
 
   const handleSearch = useDebouncedCallback((term: string) => {
-    const params = new URLSearchParams(searchParams?.toString() ?? "");
+    const params = new URLSearchParams(searchParams);
     if (term) {
       params.set("remote", term);
     } else {

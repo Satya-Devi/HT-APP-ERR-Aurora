@@ -19,7 +19,7 @@ export default function Search({ placeholder }: SearchProps) {
   const debounceTime = isMobile ? 800 : 300;
 
   const handleSearch = useDebouncedCallback((term: string) => {
-    const params = new URLSearchParams(searchParams?.toString() || "");
+    const params = new URLSearchParams(searchParams);
     if (term) {
       params.set("query", term);
     } else {
@@ -35,7 +35,7 @@ export default function Search({ placeholder }: SearchProps) {
       variant="filled"
       leftSection={<IconSearch size={20} />}
       placeholder={placeholder}
-      defaultValue={searchParams?.get("query")?.toString() || ""}
+      defaultValue={searchParams.get("query")?.toString()}
       onChange={(event) => handleSearch(event.currentTarget.value)}
     />
   );

@@ -11,7 +11,7 @@ export default function SearchLocation() {
   const { replace } = useRouter();
 
   const handleSearch = useDebouncedCallback((term: string) => {
-    const params = new URLSearchParams(searchParams?.toString() || "");
+    const params = new URLSearchParams(searchParams);
     if (term) {
       params.set("location", term);
     } else {
@@ -32,7 +32,7 @@ export default function SearchLocation() {
       variant="filled"
       leftSection={<IconSearch size={20} />}
       placeholder="Search by location"
-      defaultValue={searchParams?.get("location")?.toString()}
+      defaultValue={searchParams.get("location")?.toString()}
       onChange={(event) => handleSearch(event.currentTarget.value)}
     />
   );

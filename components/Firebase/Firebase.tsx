@@ -10,13 +10,13 @@ const Firebase = () => {
     const searchParams = useSearchParams();
 
     useEffect(() => {
-        if (analytics) {
-            logEvent(analytics, 'page_view' as string, {
+        if(analytics){
+            logEvent(analytics, 'page_view', {
                 page_path: pathname,
-                page_search: searchParams?.toString() ?? '',
+                page_search: searchParams.toString(),
             });
         }
-    }, [pathname, searchParams])
+    },[pathname,searchParams])
 
     return(<></>)
 }

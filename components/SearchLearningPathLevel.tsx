@@ -13,7 +13,7 @@ export default function SearchLearningPathLevel() {
   const [value, setValue] = useState<string | null>("");
 
   const handleSearch = useDebouncedCallback((term: string) => {
-    const params = new URLSearchParams(searchParams?.toString() || '');
+    const params = new URLSearchParams(searchParams);
     if (term) {
       params.set("learningPathLevel", term);
     } else {
