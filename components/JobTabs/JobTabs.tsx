@@ -13,7 +13,7 @@ const JobTabs = () => {
     const [clickedTab, setClickedTab] = useState("");
 
     const activeTab = useMemo(() => {
-        const tab = searchParams?.get("tab");
+        const tab = searchParams.get("tab");
         if (tab === "all-jobs") {
             return "all-jobs";
         } else if (tab === "latest-jobs") {
@@ -27,7 +27,7 @@ const JobTabs = () => {
     }, [activeTab]);
 
     const handleClick = (tab: string) => {
-        const params = new URLSearchParams(searchParams?.toString() || "");
+        const params = new URLSearchParams(searchParams);
         setClickedTab(tab);
         if (tab) {
             params.set("tab", tab);

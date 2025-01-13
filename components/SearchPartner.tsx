@@ -15,7 +15,7 @@ export default function SearchPartner({ placeholder }: SearchPartnerProps) {
   const { replace } = useRouter();
 
   const handleSearch = useDebouncedCallback((term: string) => {
-    const params = new URLSearchParams(searchParams?.toString() || "");
+    const params = new URLSearchParams(searchParams);
     if (term) {
       params.set("partner", term);
     } else {
@@ -30,7 +30,7 @@ export default function SearchPartner({ placeholder }: SearchPartnerProps) {
       radius="md"
       leftSection={<IconSearch size={20} />}
       placeholder={placeholder}
-      defaultValue={searchParams?.get("partner")?.toString()}
+      defaultValue={searchParams.get("partner")?.toString()}
       onChange={(event) => handleSearch(event.currentTarget.value)}
     />
   );

@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig = {};
+
+module.exports = {
   images: {
     remotePatterns: [
       {
@@ -9,26 +11,14 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "**",
+        hostname: "**", // Allows all hosts (if truly necessary)
         pathname: "**",
       },
       {
         protocol: "http",
         hostname: "filecache.mediaroom.com",
-        pathname: "**",
+        pathname: "**", // Allows all paths for this hostname
       },
     ],
   },
-  webpack: (config) => {
-    return {
-      ...config,
-      optimization: {
-        ...config.optimization,
-        minimize: false, // Disable minification for clearer error messages
-      },
-    };
-  },
-  reactStrictMode: true, // Strict mode enabled
 };
-
-export default nextConfig;
