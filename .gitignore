@@ -4,4 +4,3 @@ yarn.lock
 .next
 .env*
 .DS_Store
-package.json
