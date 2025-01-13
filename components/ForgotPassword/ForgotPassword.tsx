@@ -20,9 +20,15 @@ export default function ForgotPassword() {
     setIsSubmitting(true);
     setErrorM(false);
 
-    supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: "https://happytechies.com/login"
-    })
+    if (!supabase) {
+      console.error("Supabase client is not initialized");
+      return;
+    }
+
+    supabase.auth
+      .resetPasswordForEmail(email, {
+        redirectTo: "https://happytechies.com/login",
+      })
       .then(({ error }) => {
         if (error) {
           setMessage("Something went wrong!! Please try later.");
@@ -33,7 +39,7 @@ export default function ForgotPassword() {
         setSuccess(true);
         setErrorM(false);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
         setMessage("An unexpected error occurred.");
         setErrorM(true);
@@ -146,10 +152,10 @@ const successText = {
   color: "green",
   fontSize: "16px",
   fontWeight: 500,
-}
+};
 
 const errorText = {
   color: "red",
   fontSize: "16px",
   fontWeight: 500,
-}
+};

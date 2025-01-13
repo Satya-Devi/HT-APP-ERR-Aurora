@@ -22,38 +22,43 @@ export default function GoogleLoginButton({ role }: { role?: string }) {
     }
 
     setIsLoading(true);
+    if (supabase) {
+      supabase.auth
+        .signInWithIdToken({
+          provider: "google",
+          token: response.credential,
+        })
+        .then(({ data, error }) => {
+          if (error) throw error;
+          return { data, emailCred: data?.user?.email };
+        })
+        .then(({ data, emailCred }) => {
+          if (!emailCred) {
+            throw new Error("User data unavailable");
+          }
 
-    supabase.auth
-      .signInWithIdToken({
-        provider: "google",
-        token: response.credential,
-      })
-      .then(({ data, error }) => {
-        if (error) throw error;
-        return { data, emailCred: data?.user?.email };
-      })
-      .then(({ data, emailCred }) => {
-        if (!emailCred) {
-          throw new Error("User data unavailable");
-        }
-
-        if (role === "Employer") {
-          return handleEmployerData(data, emailCred);
-        }
-        return handleUserData(data, emailCred);
-      })
-      .then(() => {
-        role === "Employer" ? router.push("/overview") : router.push("/jobs");
-      })
-      .catch((error) => {
-        console.error("Sign-in error:", error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+          if (role === "Employer") {
+            return handleEmployerData(data, emailCred);
+          }
+          return handleUserData(data, emailCred);
+        })
+        .then(() => {
+          role === "Employer" ? router.push("/overview") : router.push("/jobs");
+        })
+        .catch((error) => {
+          console.error("Sign-in error:", error);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
   };
 
   const handleEmployerData = (data: any, emailCred: string) => {
+    if (!supabase) {
+      console.error("Supabase client is not initialized");
+      return;
+    }
     return supabase
       .from("employer_details")
       .select("id")
@@ -70,6 +75,10 @@ export default function GoogleLoginButton({ role }: { role?: string }) {
   };
 
   const insertEmployerData = (empInfo: any, empMeta: any) => {
+    if (!supabase) {
+      console.error("Supabase client is not initialized");
+      return;
+    }
     return supabase.from("employer_details").insert([
       {
         id: empInfo.id,
@@ -82,6 +91,10 @@ export default function GoogleLoginButton({ role }: { role?: string }) {
   };
 
   const handleUserData = (data: any, emailCred: string) => {
+    if (!supabase) {
+      console.error("Supabase client is not initialized");
+      return;
+    }
     return supabase
       .from("users")
       .select("id")
@@ -98,6 +111,10 @@ export default function GoogleLoginButton({ role }: { role?: string }) {
   };
 
   const insertUserData = (userInfo: any, userMeta: any) => {
+    if (!supabase) {
+      console.error("Supabase client is not initialized");
+      return;
+    }
     return supabase.from("users").insert([
       {
         id: userInfo.id,
@@ -145,18 +162,18 @@ export default function GoogleLoginButton({ role }: { role?: string }) {
       onClick={handleSignIn}
       disabled={isLoading}
       style={{
-        width: '50px',
-        height: '50px',
+        width: "50px",
+        height: "50px",
         padding: 0,
-        borderRadius: '50%',
-        border: '1px solid #fff',
-        background: 'white',
-        cursor: isLoading ? 'wait' : 'pointer',
-        position: 'relative',
-        overflow: 'hidden',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
+        borderRadius: "50%",
+        border: "1px solid #fff",
+        background: "white",
+        cursor: isLoading ? "wait" : "pointer",
+        position: "relative",
+        overflow: "hidden",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
       }}
     >
       <Image
@@ -166,23 +183,24 @@ export default function GoogleLoginButton({ role }: { role?: string }) {
         height={24}
         style={{
           opacity: isLoading ? 0.5 : 1,
-          transition: 'opacity 0.3s',
+          transition: "opacity 0.3s",
         }}
       />
       {isLoading && (
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          background: 'rgba(255, 255, 255, 0.8)',
-          borderRadius: '50%',
-        }}>
-        </div>
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            background: "rgba(255, 255, 255, 0.8)",
+            borderRadius: "50%",
+          }}
+        ></div>
       )}
     </button>
   );

@@ -29,7 +29,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "components/GoogleLoginButton.jsx"
+    "components/GoogleLoginButton.jsx",
+    "next.config.mjs"
   ],
   "exclude": ["node_modules", "supabase"]
 }

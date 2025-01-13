@@ -11,6 +11,10 @@ export default function LinkedInLoginButton({ role }: { role?: string }) {
   const handleLoginWithLinkedIn = () => {
     setIsLoading(true);
     const supabase = createClient();
+    if (!supabase) {
+      console.error("Failed to create Supabase client");
+      return;
+    }
     
     supabase.auth.signInWithOAuth({
       provider: 'linkedin_oidc',

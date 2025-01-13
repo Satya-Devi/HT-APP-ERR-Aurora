@@ -11,6 +11,11 @@ export default function MicrosoftLoginButton({ role }: { role?: string }) {
   const handleLoginWithMicrosoft = () => {
     setIsLoading(true);
     const supabase = createClient();
+
+    if (!supabase) {
+      console.error("Supabase client is not initialized.");
+      return;
+    }
     
     supabase.auth.signInWithOAuth({
       provider: 'azure',
