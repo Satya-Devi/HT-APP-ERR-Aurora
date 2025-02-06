@@ -1,5 +1,4 @@
 "use client";
-
 import { Box, Modal, Text, Title, Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import React, { useState, useEffect } from "react";
@@ -15,121 +14,97 @@ type Props = {
 export default function ResetPassword({ searchParams }: Props) {
   const [opened, { open, close }] = useDisclosure(false);
   const [success, setSuccess] = useState(false);
-  const [errorM, setErrorM] = useState(false);
-  const [message, setMessage] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorM, setErrorM] = useState(false)
+  const [message, setMessage] = useState("")
 
-  const handleResetPassword = (formData: FormData) => {
+  const handleResetPassword = async (formData: FormData) => {
     const password = formData.get("password") as string;
     const confirm_password = formData.get("confirm password") as string;
-
-    if (password !== confirm_password) {
-      setMessage("Passwords don't match!");
-      setErrorM(true);
-      return;
-    }
-
-    setIsSubmitting(true);
-    setErrorM(false);
+    console.log(password, confirm_password)
+    if (password !== confirm_password) return setMessage("Passwords don't match!"), setErrorM(true);
     const supabase = createClient();
-
-    if (!supabase) {
-      console.error("Supabase client is not initialized.");
-      return;
-    }
-
-    supabase.auth.updateUser({ password })
-      .then(({ data, error }) => {
-        if (error) {
-          setMessage("Something went wrong!! Please try later.");
-          setErrorM(true);
-          return;
-        }
-        if (data) {
-          setMessage("Password changed successfully!");
-          setSuccess(true);
-          setErrorM(false);
-        }
-      })
-      .catch(error => {
-        console.error(error);
-        setMessage("An unexpected error occurred");
-        setErrorM(true);
-      })
-      .finally(() => {
-        setIsSubmitting(false);
+    try {
+      setErrorM(false)
+      const { data, error } = await supabase.auth.updateUser({
+        password
       });
+      if (error) {
+        return setMessage("Something went wrong!! Please try later."), setErrorM(true);
+      }
+      if (data) setMessage("Password changed successfully!"), setSuccess(!success), setErrorM(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  useEffect(() => {
-    if (searchParams?.code) {
-      open();
+  useEffect(()=>{
+    if(searchParams?.code){
+        open()
     }
-  }, [searchParams]);
+  }, [searchParams])
 
   useEffect(() => {
     if (success) {
-      const timer = setTimeout(() => {
+      setTimeout(() => {
         close();
-        setSuccess(false);
+        setSuccess(!success);
       }, 8000);
-      return () => clearTimeout(timer);
     }
   }, [success]);
 
   return (
-    <Modal opened={opened} onClose={close} centered size="lg">
-      <Box ml={40} mr={40} mb={40}>
-        <Title
-          ta="left"
-          order={1}
-          className={SFProRounded.className}
-          c="blue"
-          mb={20}
-        >
-          New password
-        </Title>
-        <form>
-          <div style={{ marginBottom: "10px" }}>
-            <label htmlFor="password" style={labelStyle}>
-              Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              placeholder="••••••••"
-              required
-              style={inputStyle}
-            />
-          </div>
-          <div style={{ marginBottom: "10px" }}>
-            <label htmlFor="confirm password" style={labelStyle}>
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              name="confirm password"
-              placeholder="••••••••"
-              required
-              style={inputStyle}
-            />
-          </div>
-          {success && <Text style={successText}>{message}</Text>}
-          {errorM && <Text style={errorText}>{message}</Text>}
-          <Button
-            style={buttonStyle}
-            type="submit"
-            formAction={handleResetPassword}
-            disabled={isSubmitting}
+    <>
+      <Modal opened={opened} onClose={close} centered size="lg">
+        <Box ml={40} mr={40} mb={40}>
+          <Title
+            ta="left"
+            order={1}
+            className={SFProRounded.className}
+            c="blue"
+            mb={20}
           >
-            {isSubmitting ? "Updating..." : "Submit"}
-          </Button>
-        </form>
-      </Box>
-    </Modal>
+            New password
+          </Title>
+          <form>
+            <div style={{ marginBottom: "10px" }}>
+              <label htmlFor="password" style={labelStyle}>
+                Password
+              </label>
+              <input
+                type="password"
+                name="password"
+                placeholder="••••••••"
+                required
+                style={inputStyle}
+              />
+            </div>
+            <div style={{ marginBottom: "10px" }}>
+              <label htmlFor="confirm password" style={labelStyle}>
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                name="confirm password"
+                placeholder="••••••••"
+                required
+                style={inputStyle}
+              />
+            </div>
+            {success && <Text style={successText}>{message}</Text>}
+            {errorM && <Text style={errorText}>{message}</Text>}
+            <Button
+              style={buttonStyle}
+              type="submit"
+              formAction={handleResetPassword}
+            >
+              Submit
+            </Button>
+          </form>
+        </Box>
+      </Modal>
+    </>
   );
 }
-
 
 const inputContainerStyle = {
   marginBottom: "20px",

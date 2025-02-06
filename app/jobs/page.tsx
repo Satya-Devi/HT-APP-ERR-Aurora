@@ -30,20 +30,17 @@ export default async function Page({
   const supabase = createClient();
   const {
     data: { user },
+    error: userError,
   } = await supabase.auth.getUser();
-  let itemsPerPage = 10;
 
-  if (searchParams?.count && ["25", "50"].includes(searchParams?.count)) {
-    itemsPerPage = parseInt(searchParams?.count);
-  }
-  const searchParamsKey =
-    searchParams?.query ||
-    "" + searchParams?.location ||
-    "" + searchParams?.remote ||
-    "" + searchParams?.includeFulltime + searchParams?.includeContractor ||
-    "" + searchParams?.speciality ||
-    "" + searchParams?.company ||
-    "";
+  // Set items per page with validation
+  const itemsPerPage =
+    searchParams?.count && ["25", "50"].includes(searchParams.count)
+      ? parseInt(searchParams.count)
+      : 10;
+
+  // Create a stable search params key
+  const searchParamsKey = Object.values(searchParams || {}).join("");
 
   return (
     <>

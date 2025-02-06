@@ -47,10 +47,12 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
   if (error) console.error(error);
 
-  const glassdoorRating = await fetchGlassdoorRating(
+  const glassdoorData = await fetchGlassdoorRating(
     story.content.glassdoor_company_id
   );
-  const { rating = "N/A", reviewCount = 0 } = glassdoorRating || {};
+
+  const rating = glassdoorData?.rating ? glassdoorData.rating : "N/A";
+  const reviewCount = 0;
 
   return (
     <>
@@ -311,7 +313,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                     style={{ maxWidth: "125px" }}
                   />
                   <Group gap={0} align="center">
-                    <RatingComponent rating={rating} />
+                    <RatingComponent rating={rating || 0} />
                     <Text fw={500} ml={2} mb={5}>| {reviewCount} reviews</Text>
                   </Group>
                 </CardSection>

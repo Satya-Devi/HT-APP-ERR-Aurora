@@ -1,5 +1,4 @@
 "use client";
-
 import { Box, Modal, Text, Title, Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import React, { useState, useEffect } from "react";
@@ -9,55 +8,37 @@ import { createClient } from "@/utils/supabase/client";
 
 export default function ForgotPassword() {
   const [opened, { open, close }] = useDisclosure(false);
-  const [success, setSuccess] = useState(false);
-  const [errorM, setErrorM] = useState(false);
-  const [message, setMessage] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false)
+  const [errorM, setErrorM] = useState(false)
+  const [message, setMessage] = useState("")
 
-  const handleForgotPassword = (formData: FormData) => {
+  const handleForgotPassword = async (formData: FormData) => {
     const email = formData.get("email") as string;
     const supabase = createClient();
-    setIsSubmitting(true);
-    setErrorM(false);
-
-    if (!supabase) {
-      console.error("Supabase client is not initialized");
-      return;
-    }
-
-    supabase.auth
-      .resetPasswordForEmail(email, {
-        redirectTo: "https://happytechies.com/login",
-      })
-      .then(({ error }) => {
-        if (error) {
-          setMessage("Something went wrong!! Please try later.");
-          setErrorM(true);
-          return;
-        }
-        setMessage("Success! A password reset email has been sent.");
-        setSuccess(true);
-        setErrorM(false);
-      })
-      .catch((error) => {
-        console.error(error);
-        setMessage("An unexpected error occurred.");
-        setErrorM(true);
-      })
-      .finally(() => {
-        setIsSubmitting(false);
+    try {
+      setErrorM(false)
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: "https://happytechies.com/login"
       });
+      if (error) {
+        return setMessage("Something went wrong!! Please try later."), setErrorM(true);
+      }
+      setMessage("Success! A password reset email has been sent.")
+      setSuccess(!success)
+      setErrorM(false)
+    } catch (error) {
+      console.log(error)
+    }
   };
 
-  useEffect(() => {
-    if (success) {
-      const timer = setTimeout(() => {
-        close();
-        setSuccess(false);
-      }, 8000);
-      return () => clearTimeout(timer);
+  useEffect(()=> {
+    if(success){
+      setTimeout(()=>{
+        close()
+        setSuccess(!success)
+      },8000)
     }
-  }, [success, close]);
+  },[success])
 
   return (
     <>
@@ -82,8 +63,9 @@ export default function ForgotPassword() {
             Forgot your password?
           </Title>
           <Text className={SFProRounded.className} c="dark" size="md">
-            Just enter the email you used to sign up, and we'll send you the
-            steps to reset your password.
+            Just enter the email you used to sign up, and we’ll send you the
+            steps to reset your password. Don't worry, we never store your
+            password, so we’ll never email it to you.
           </Text>
           <form>
             <div style={inputContainerStyle}>
@@ -103,9 +85,8 @@ export default function ForgotPassword() {
               style={buttonStyle}
               type="submit"
               formAction={handleForgotPassword}
-              disabled={isSubmitting}
             >
-              {isSubmitting ? "Sending..." : "Send reset instructions"}
+              Send reset instructions
             </Button>
           </form>
         </Box>
@@ -152,10 +133,10 @@ const successText = {
   color: "green",
   fontSize: "16px",
   fontWeight: 500,
-};
+}
 
 const errorText = {
   color: "red",
   fontSize: "16px",
   fontWeight: 500,
-};
+}

@@ -69,7 +69,7 @@ const NewsSection = () => {
             </Title>
             <Box maw={1200} mx='auto'>
             <Slider  {...settings}>
-               {news.map((item:any,index)=>(
+               {news && news.map((item:any,index)=>(
                  <NewsCard
                   key={index}
                   title={item?.title}

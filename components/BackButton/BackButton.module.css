@@ -12,7 +12,21 @@
     margin-left: 0px;
   }
 }
-
+.ebackButton {
+  
+  fill: #004A93;
+  color: transparent; 
+  cursor: pointer; 
+  width: 38px; 
+  height: 38px;
+  margin-left: 20px;
+  border : none;
+  padding: 0;
+  background-color: none;
+  @media (max-width: 430px){
+    margin-left: 0px;
+  }
+}
 .backButton:hover {
   color: #004a93; 
 }

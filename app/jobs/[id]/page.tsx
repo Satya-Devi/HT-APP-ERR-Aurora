@@ -52,7 +52,13 @@ export default async function Page({ params }: { params: { id: string } }) {
     .eq("id", params.id)
     .single();
 
-  if (error || job === null) return <div>Job not found.</div>;
+  if (error) {
+    return <div>Error loading job: {error.message}</div>;
+  }
+
+  if (!job) {
+    return <div>Job not found</div>;
+  }
 
   let { data: jobs, error: jobsError } = await supabase
     .from("jobs")
@@ -83,7 +89,7 @@ export default async function Page({ params }: { params: { id: string } }) {
   }
 
   const SaveButton = () => {
-    if (!user) {
+    if (!user?.id) {
       return (
         <Button
           component="a"
@@ -210,7 +216,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                       // lineHeight: "73.2px",
                       textAlign: "left",
                       color: "#004A93",
-                      wordBreak:"break-all"
+                      wordBreak: "break-all",
                     }}
                   >
                     {job.job_title}
@@ -252,7 +258,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                       color: "#000000B2",
                     }}
                   >
-                    Company: {job.company_name}
+                    Company: {job.company_name || "N/A"}
                   </span>
                 </div>
 
@@ -274,7 +280,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                     }}
                     className={SFProRounded.className}
                   >
-                    {job.job_description}
+                    {job.job_description || "No description provided."}
                   </Text>
                 </Box>
 
@@ -667,7 +673,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                     }}
                   >
                     {job.salary_range
-                      ? job.salary_range.replace(/\b(\d+)\b/g, (match:any) =>
+                      ? job.salary_range.replace(/\b(\d+)\b/g, (match: any) =>
                           parseInt(match, 10).toLocaleString()
                         )
                       : "No salary information was found."}

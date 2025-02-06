@@ -8,15 +8,18 @@ type BackButtonProps = {
   BackButtonStyles?: React.CSSProperties;
 };
 
-export default function BackButton({ BackButtonStyles }: BackButtonProps) {
-
+// export default function BackButton({ BackButtonStyles }: BackButtonProps, {role}:{role?:string}) {
+export default function BackButton({
+  BackButtonStyles,
+  role,
+}: BackButtonProps & { role?: string }) {
   const initialRoute = useRef<string | null>(null);
 
   useLayoutEffect(() => {
     // Capture the initial URL as soon as the component is rendered
     if (!initialRoute.current) {
       initialRoute.current = `${window.location.origin}${window.location.pathname}${window.location.search}`;
-      console.log('Captured initial route with filters:', initialRoute.current);
+      console.log("Captured initial route with filters:", initialRoute.current);
     }
   }, []);
 
@@ -31,7 +34,9 @@ export default function BackButton({ BackButtonStyles }: BackButtonProps) {
 
   return (
     <IconCircleArrowLeftFilled
-      className={classes.backButton}
+      className={
+        role && role == "Employer" ? classes.ebackButton : classes.backButton
+      }
       style={BackButtonStyles}
       onClick={handleBackClick}
     />

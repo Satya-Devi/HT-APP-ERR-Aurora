@@ -26,11 +26,165 @@ import {
   IconUsers,
 } from "@tabler/icons-react";
 
-export default function MainNav({ children }: { children: ReactNode }) {
+// import {getUser, getEmpUser, signOut, empSignOut} from "@/components/EmpUser/empuser"
+export default async function MainNav({
+  children,
+  role,
+}: {
+  children: ReactNode;
+  role?: string;
+}) {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
 
-  return (
+  // let emp_user;
+  // let user = await getUser();
+  // if(user){
+  //   console.log("User data+++++=======", user);
+  // }
+  // if(role == "Employer"){
+  // emp_user = getEmpUser;
+  // }
+  // const signOutUser = async () => {
+  //   signOut();
+  // };
+  // const signOutEmployer = async () => {
+  //  empSignOut();
+  // };
+
+  return role == "Employer" ? (
+    <Box>
+      <header className={classes.header}>
+        <Group justify="space-between" h="100%">
+          {children}
+          <Burger
+            opened={drawerOpened}
+            onClick={toggleDrawer}
+            hiddenFrom="sm"
+          />
+        </Group>
+      </header>
+
+      <Drawer
+        opened={drawerOpened}
+        onClose={closeDrawer}
+        size="100%"
+        padding="md"
+        hiddenFrom="sm"
+        zIndex={1000000}
+      >
+        <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
+          <Link href="/" style={{ textDecoration: "none", cursor: "pointer" }}>
+            <Image
+              src="/images/logo.png"
+              alt="logo"
+              className={classes.logo_sidebar}
+            />
+          </Link>
+
+          <Stack>
+            <Link
+              href="/overview"
+              className={`${classes.link} ${SFProRounded.className} ${classes.mobileLink}`}
+            >
+              {/* <div className={classes.menuItemContent}> */}
+              <h4 className={`${classes.title} ${classes.mobileTitle}`}>
+                Overview
+              </h4>
+              {/* </div> */}
+            </Link>
+
+            <Link
+              href="/post-job"
+              className={`${classes.link} ${SFProRounded.className} ${classes.mobileLink}`}
+            >
+              {/* <div className={classes.menuItemContent}> */}
+              <h4 className={`${classes.title} ${classes.mobileTitle}`}>
+                Post a Job
+              </h4>
+              {/* </div> */}
+            </Link>
+
+            <Link
+              href="/my-jobs"
+              className={`${classes.link} ${SFProRounded.className} ${classes.mobileLink}`}
+            >
+              {/* <div className={classes.menuItemContent}> */}
+              <h4 className={`${classes.title} ${classes.mobileTitle}`}>
+                My jobs
+              </h4>
+              {/* </div> */}
+            </Link>
+
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                gap: "30px",
+              }}
+            >
+              {/* {user ? (
+                <form action={signOut}>
+                <Button
+                  type="submit"
+                  radius="md"
+                  size="md"
+                  variant="filled"
+                  color="#004a93"
+                >
+                  Logout
+                </Button>
+              </form>
+              ):( */}
+              <Link
+                href="/employers-login"
+                className={SFProRounded.className}
+                passHref
+              >
+                <Button
+                  radius="md"
+                  size="md"
+                  variant="filled"
+                  color="#004a93"
+                  component="a"
+                  style={{
+                    marginBottom: "var(--mantine-spacing-sm)",
+                    width: "100px",
+                  }}
+                >
+                  Login
+                </Button>
+              </Link>
+              {/* )} */}
+
+              <Link
+                href="/employers-signup"
+                className={SFProRounded.className}
+                passHref
+              >
+                <Button
+                  radius="md"
+                  size="md"
+                  variant="filled"
+                  color="#004a93"
+                  component="a"
+                  style={{
+                    marginBottom: "var(--mantine-spacing-sm)",
+                    width: "100px", // Same width as the Login button
+                  }}
+                >
+                  Sign Up
+                </Button>
+              </Link>
+            </div>
+          </Stack>
+        </ScrollArea>
+      </Drawer>
+    </Box>
+  ) : (
     <Box>
       <header className={classes.header}>
         <Group justify="space-between" h="100%">
@@ -80,7 +234,7 @@ export default function MainNav({ children }: { children: ReactNode }) {
                   <p
                     className={`${classes.description} ${classes.mobileDescription}`}
                   >
-                    Stay up to date on what's happening in the Microsoft
+                    Stay up to date on date what's happening in the Microsoft
                     ecosystem
                   </p>
                 </div>
@@ -279,6 +433,25 @@ export default function MainNav({ children }: { children: ReactNode }) {
                   }}
                 >
                   Sign Up
+                </Button>
+              </Link>
+              <Link
+                href="/overview"
+                className={SFProRounded.className}
+                passHref
+              >
+                <Button
+                  radius="md"
+                  size="md"
+                  variant="filled"
+                  color="blue"
+                  component="a"
+                  style={{
+                    marginBottom: "var(--mantine-spacing-sm)",
+                    width: "150px", // Same width as the Login button
+                  }}
+                >
+                  Employers
                 </Button>
               </Link>
             </div>

@@ -1,5 +1,4 @@
 "use client";
-
 import { JobData } from "@/utils/interface";
 import {
   Badge,
@@ -7,6 +6,7 @@ import {
   Button,
   Card,
   Container,
+  Group,
   Text,
 } from "@mantine/core";
 import classes from "./JobCardSmall.module.css";
@@ -22,7 +22,7 @@ import { notifications } from "@mantine/notifications";
 import { useState, useEffect } from "react";
 import UnsaveJobButton from "../UnsaveJobButton/UnsaveJobButton";
 import { useMediaQuery } from "@mantine/hooks";
-import Image from "next/image";
+import Image from "next/image"; //mantine images are not working on firefox so keep this
 import { useRouter } from "next/navigation";
 import { CardImage } from "../CardImage/CardImage";
 
@@ -47,12 +47,16 @@ const temp: JobData = {
   solution_area: "Data & AI",
   brief_summary: "",
 };
-const JobCardSmallMobile = ({ job = temp, userId, isTracker = false }: JobCardSmallProps) => {
+
+const JobCardSmallMobile = ({
+  job = temp,
+  userId,
+  isTracker = false,
+}: JobCardSmallProps) => {
   const [company_logo, setCompanyLogo] = useState(job.employer_logo);
   const [isSaved, setIsSaved] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const isMobile = useMediaQuery("(max-width: 1024px)");
-  const router = useRouter();
+  const router=useRouter();
 
   useEffect(() => {
     const savedJobs = JSON.parse(localStorage.getItem("savedJobs") || "[]");
@@ -61,8 +65,12 @@ const JobCardSmallMobile = ({ job = temp, userId, isTracker = false }: JobCardSm
     }
   }, [job.id]);
 
+  // const handleClick = () => {
+  //   window.location.href = "/jobs/" + job.id;
+  // };
+
   const isHotJob = () => {
-    let skills = [
+    let skils = [
       "Data and AI",
       "Security",
       "Modern Work",
@@ -72,111 +80,109 @@ const JobCardSmallMobile = ({ job = temp, userId, isTracker = false }: JobCardSm
     ];
     if (
       job.solution_area &&
-      skills.includes(job.solution_area) &&
+      skils.includes(job.solution_area) &&
       moment().diff(moment(job.created_at), "days") <= 8
     ) {
       return true;
     }
-    return false; 
+    return false;
   };
 
-  const handleSaveJob = (event: React.MouseEvent<HTMLElement>) => {
+  const handleSaveJob = async (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
     event.preventDefault();
-    
-    if (!userId) {
-      window.location.href = "/login";
-      return;
-    }
-
-    setIsLoading(true);
-    saveJob(userId, job)
-      .then(() => {
-        setIsSaved(true);
-        const savedJobs = JSON.parse(localStorage.getItem("savedJobs") || "[]");
-        localStorage.setItem("savedJobs", JSON.stringify([...savedJobs, job.id]));
-        notifications.show({
-          title: "Job saved!",
-          message: "The job has been saved successfully!",
-          color: "green",
-        });
-      })
-      .catch(() => {
-        notifications.show({
-          title: "Oops...",
-          message: "Unable to save the job. Please try again later.",
-          color: "red",
-        });
-      })
-      .finally(() => {
-        setIsLoading(false);
+    try {
+      if (!userId) {
+        return (window.location.href = "/login");
+      }
+      await saveJob(userId, job);
+      setIsSaved(true);
+      const savedJobs = JSON.parse(localStorage.getItem("savedJobs") || "[]");
+      localStorage.setItem("savedJobs", JSON.stringify([...savedJobs, job.id]));
+      notifications.show({
+        title: "Job saved!",
+        message: "The job has been saved successfully!",
+        color: "green",
       });
+    } catch (err) {
+      notifications.show({
+        title: "Oops...",
+        message: "Unable to save the job. Please try again later.",
+        color: "red",
+      });
+    }
   };
 
-  const handleUnsaveJob = (event: React.MouseEvent<HTMLElement>) => {
+  // const handleUnsaveJob = async (event: React.MouseEvent<HTMLElement>) => {
+  //   event.stopPropagation();
+  //   event.preventDefault();
+  //   setIsSaved(false);
+  //   const savedJobs = JSON.parse(
+  //     localStorage.getItem("savedJobs") || "[]"
+  //   ).filter((id: string) => id !== job.id);
+  //   localStorage.setItem("savedJobs", JSON.stringify(savedJobs));
+  // };
+
+  const handleUnsaveJob = async (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
     event.preventDefault();
-    
-    if (!userId) {
-      window.location.href = "/login";
-      return;
-    }
+    try {
+      if (!userId) {
+        return (window.location.href = "/login");
+      }
+      await unsaveJob(userId, job.id);
+      setIsSaved(false);
 
-    setIsLoading(true);
-    unsaveJob(userId, job.id)
-      .then(() => {
-        setIsSaved(false);
-        const savedJobs = JSON.parse(localStorage.getItem("savedJobs") || "[]")
-          .filter((id: string) => id !== job.id);
-        localStorage.setItem("savedJobs", JSON.stringify(savedJobs));
-        notifications.show({
-          title: "Job removed",
-          message: "The job has been removed from your saved jobs.",
-          color: "green",
-        });
-      })
-      .catch(() => {
-        notifications.show({
-          title: "Oops...",
-          message: "Unable to remove the job. Please try again later.",
-          color: "red",
-        });
-      })
-      .finally(() => {
-        setIsLoading(false);
+      const savedJobs = JSON.parse(
+        localStorage.getItem("savedJobs") || "[]"
+      ).filter((id: string) => id !== job.id);
+      localStorage.setItem("savedJobs", JSON.stringify(savedJobs));
+
+      notifications.show({
+        title: "Job removed",
+        message: "The job has been removed from your saved jobs.",
+        color: "green",
       });
+    } catch (err) {
+      notifications.show({
+        title: "Oops...",
+        message: "Unable to remove the job. Please try again later.",
+        color: "red",
+      });
+    }
   };
 
   const handleJobClick = () => {
     router.push(`/jobs/${job.id}`);
-  };
+  }
 
   return (
     <Card onClick={handleJobClick} className={classes.container}>
+      {/* <Group className={classes.top_area}> */}
+      {/* <Box style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}> */}
       <Box className={classes.time_save_wrapper_mobile}>
         <Text className={classes.time_text}>
           <TimeAgo date={job.created_at} />
         </Text>
         <Box className={classes.save_wrapper_mobile}>
           {isTracker ? (
-            userId && (
+            userId ? (
               <UnsaveJobButton
                 userId={userId}
-                jobId={job.id || ""}
+                jobId={job.id ? job.id : ""}
                 onUnsave={handleUnsaveJob}
               />
-            )
+            ) : null
           ) : (
             <Button
-              mx="17px"
+              mx={"17px"}
               onClick={isSaved ? handleUnsaveJob : handleSaveJob}
               p={0}
               mih={28}
               h={28}
               w={28}
-              radius="lg"
+              radius={"lg"}
               bg="#DDF0FD"
-              disabled={isLoading}
             >
               {isSaved ? (
                 <IconBookmarkFilled size={14} color="#004A93" />
@@ -187,7 +193,7 @@ const JobCardSmallMobile = ({ job = temp, userId, isTracker = false }: JobCardSm
           )}
           {isMobile && isHotJob() && (
             <Image
-              src="/images/hot.png"
+              src={"/images/hot.png"}
               className={`${classes.hot_badge} ${classes.hot_badge_mobile}`}
               alt="hot-job-icon"
               width={13}

@@ -18,7 +18,7 @@ import classes from "./Job.module.css";
 import { saveJob } from "@/app/jobs/[id]/actions";
 import { notifications } from "@mantine/notifications";
 import { JobData } from "@/utils/interface";
-import React, { useState } from "react";
+import React from "react";
 
 type JobProps = {
   job: JobData;
@@ -28,73 +28,63 @@ type JobProps = {
 
 const pinnedIconStyle = { width: "70%", height: "70%" };
 
-export function Job({ userId, job, isTrackedPage = false }: JobProps) {
+export function Job({ userId, job,isTrackedPage=false }: JobProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const [isSaving, setIsSaving] = useState(false);
-
   if (isMobile) return <MobileJob isTrackedPage={isTrackedPage} userId={userId} job={job} />;
 
   const features = job.skills?.map((skill: any) => (
     <Badge variant="outline" size="lg" key={skill} color="#004a93">
-      <span style={{ letterSpacing: 1, fontWeight: 600, fontSize: 12 }}>
+      <span
+        style={{
+          letterSpacing: 1,
+          fontWeight: 600,
+          fontSize: 12,
+        }}
+      >
         {skill}
       </span>
     </Badge>
   ));
 
-  const formattedTitle = job.job_title?.length && job.job_title?.length > 50
-    ? job.job_title?.substring(0, 50) + "..."
-    : job.job_title;
+  const formattedTitle =
+    job.job_title?.length && job.job_title?.length > 50
+      ? job.job_title?.substring(0, 50) + "..."
+      : job.job_title;
+
+
 
   const Buttons = ({ userId }: { userId: string | null }) => {
-    const handleSaveJob = (event: React.MouseEvent<HTMLElement>) => {
+    // if (!userId) return null;
+    const handleSaveJob = async (event:React.MouseEvent<HTMLElement>) => {
       event.stopPropagation();
       event.preventDefault();
-      
-      if (!userId) {
-        window.location.href = "/login";
-        return;
-      }
-
-      setIsSaving(true);
-      saveJob(userId, job)
-        .then(() => {
-          notifications.show({
-            title: "Job saved!",
-            message: "The job has been saved successfully!",
-            color: "green",
-          });
-        })
-        .catch(() => {
-          notifications.show({
-            title: "Oops...",
-            message: "Unable to save the job. Please try again later.",
-            color: "red",
-          });
-        })
-        .finally(() => {
-          setIsSaving(false);
+      try {
+        if(!userId) {
+         return window.location.href = "/login";
+        }
+        await saveJob(userId, job);
+        notifications.show({
+          title: "Job saved!",
+          message: "The job has been saved successfully!",
+          color: "green",
         });
-    };
-
-    const handleApply = (event: React.MouseEvent<HTMLElement>) => {
+      } catch (err) {
+        notifications.show({
+          title: "Oops...",
+          message: "Unable to save the job. Please try again later.",
+          color: "red",
+        });
+      }
+    }
+    const handleApply=(event:React.MouseEvent<HTMLElement>)=>{
       event.stopPropagation();
       event.preventDefault();
       window.open(job.job_listing_source_url || "/");
-    };
-
+    }
     return (
       <Group gap="xs" className={classes.buttonGroup}>
-        <Button 
-          fullWidth 
-          variant="outline" 
-          radius="md" 
-          style={{cursor:'pointer'}} 
-          onClick={handleSaveJob}
-          disabled={isSaving}
-        >
-          <IconHeartFilled size={20} style={{marginRight:5}} />
-          {isSaving ? "Saving..." : "Save job"}
+         <Button fullWidth variant="outline" radius="md" style={{cursor:'pointer'}} onClick={handleSaveJob}>
+          <IconHeartFilled size={20} style={{marginRight:5}} /> Save job
         </Button>
         <Button
           radius="md"

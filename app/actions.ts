@@ -47,28 +47,43 @@ export async function fetchTopNews() {
 }
 
 export async function fetchGlassdoorRating(companyId: string) {
-  const url = `https://real-time-glassdoor-data.p.rapidapi.com/company-overview?company_id=${companyId}`;
-  const options = {
-    method: "GET",
-    headers: {
-      "x-rapidapi-key": process.env.GLASSDOOR_API_KEY as string,
-      "x-rapidapi-host": "real-time-glassdoor-data.p.rapidapi.com",
-    },
-  };
+  // Handle missing company ID
+  if (!companyId) {
+    return {
+      rating: "N/A",
+      status: "success"
+    };
+  }
 
   try {
+    const url = `https://real-time-glassdoor-data.p.rapidapi.com/company-overview?company_id=${companyId}`;
+    const options = {
+      method: "GET",
+      headers: {
+        "x-rapidapi-key": process.env.GLASSDOOR_API_KEY as string,
+        "x-rapidapi-host": "real-time-glassdoor-data.p.rapidapi.com",
+      }
+    };
+
     const response = await fetch(url, options);
     const result = await response.json();
-    console.log(result, "fetchGlassdoorRating")
+    
+    // Use ternary operators for consistent data handling
+    const rating = result?.data?.rating ? result.data.rating : "N/A";
+
     return {
-      rating: result.data.rating,
-      reviewCount: result.data.review_count,
+      rating,
+      status: "success"
     };
+
   } catch (error) {
-    console.error(error);
-    return { rating: null, reviewCount: null };
+    return {
+      rating: "N/A",
+      status: "error"
+    };
   }
 }
+
 
 export async function fetchJobs({
   query,

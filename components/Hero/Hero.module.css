@@ -2,7 +2,7 @@
   position: relative;
   padding-top: rem(20px);
   padding-bottom: rem(30px);
-  margin-bottom: rem(20px);
+  /* margin-bottom: rem(20px); */
   background-blend-mode: linear-dodge, normal;
   /* background-image: radial-gradient(
       circle at 50% 100%,
@@ -39,9 +39,58 @@
   } 
 }
 
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  text-align: center;
+  align-items: center;
+  padding-top: 30px;
+}
+
 .inner {
   position: relative;
-  z-index: 1;
+  z-index: 1;}
+.empinner {
+  display: flex;
+  width: 85%;
+  justify-content: center;
+}
+
+.empTitle {
+  color: #004A93;
+  text-align: center;
+  font-size: 43px;
+  font-weight: 900;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -webkit-text-stroke: 1px #004A93;
+  text-shadow: 1px 0 0 #004A93;
+  letter-spacing: 2.5px;
+  text-align: left;
+  text-underline-position: from-font;
+  text-decoration-skip-ink: none;
+  margin-bottom: var(--mantine-spacing-xs);
+  max-width: 100%; 
+  overflow-wrap: break-word; 
+  white-space: normal;
+
+  @media (max-width: 768px) {
+    font-size: 36px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 24px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    justify-content: center;
+    gap: 10px;
+  }
 }
 
 .title {
@@ -60,7 +109,6 @@
     /* transform: translateX(-50px);  */
   } 
 }
-
 .titleStyle {
   margin-left: 30px;
   @media (max-width: 430px){
@@ -68,6 +116,7 @@
     text-align: center;
   }
 }
+
 
 .subtitle {
   text-align: left;
@@ -98,3 +147,55 @@
     font-size: var(--mantine-font-size-md);
   }
 }
+
+.backButtonContainer {
+  margin-left: 2%;
+}
+
+@media (min-width: 576px) {
+  .backButtonContainer {
+    margin-left: 3%;
+  }
+}
+
+@media (min-width: 768px) {
+  .backButtonContainer {
+    margin-left: 1.5%;
+  }
+}
+
+@media (min-width: 992px) {
+  .backButtonContainer {
+    margin-left: 3%;
+  }
+}
+
+@media (min-width: 1200px) {
+  .backButtonContainer {
+    margin-left: 3%;
+  }
+}
+
+@media (min-width: 1400px) {
+  .backButtonContainer {
+    margin-left: 3%;
+  }
+}
+
+@media (min-width: 1600px) {
+  .backButtonContainer {
+    margin-left: 4%;
+  }
+}
+
+@media (min-width: 1800px) {
+  .backButtonContainer {
+    margin-left: 5%;
+  }
+}
+@media (min-width: 2000px) {
+  .backButtonContainer {
+    margin-left: 7%;
+  }
+}
+

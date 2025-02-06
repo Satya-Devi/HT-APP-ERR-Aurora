@@ -16,6 +16,7 @@ import { Hero } from "@/components/Storyblok/Hero";
 import { Page } from "@/components/Storyblok/Page";
 import "@mantine/core/styles.layer.css";
 import "@mantine/notifications/styles.css";
+import "@mantine/dates/styles.css";
 import { Suspense } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
