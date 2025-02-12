@@ -11,7 +11,7 @@ declare global {
   }
 }
 
-export default function GoogleLoginButton({ role }: { role?: string }) {
+export default function GoogleLoginButton() {
   const router = useRouter();
   const supabase = createClient();
   const [isLoading, setIsLoading] = useState(false);
@@ -47,82 +47,44 @@ export default function GoogleLoginButton({ role }: { role?: string }) {
       }
 
       // Check if the user already exists in the users table
+      const { data: userData, error: userError } = await supabase
+        .from("users")
+        .select("id")
+        .eq("email", emailCred)
+        .maybeSingle(); // Use maybeSingle() to handle zero rows gracefully
 
-      if (role == "Employer") {
-        const { data: empData, error: empError } = await supabase
-          .from("employer_details")
-          .select("id")
-          .eq("email", emailCred)
-          .maybeSingle(); // Use maybeSingle() to handle zero rows gracefully
+      if (userError) {
+        console.error("Error fetching user:", userError);
+        return;
+      }
 
-        if (empError) {
-          console.error("Error fetching user:", empError);
-          return;
-        }
-        const empDataInfo = data?.session?.user;
-        const empNameMeta = data?.user?.user_metadata;
-        if (!empData && role == "Employer") {
-          const { data: insertData, error: insertError } = await supabase
-            .from("employer_details")
-            .insert([
-              {
-                id: empDataInfo.id,
-                email: empDataInfo.email ?? null,
-                provider: empDataInfo.app_metadata.provider ?? null,
-                emp_name: empNameMeta.name,
-                is_employer_login: true,
-                created_at: new Date().toISOString(),
-              },
-            ]);
+      const userDataInfo = data?.session?.user;
+      const userNameMeta = data?.user?.user_metadata;
 
-          if (insertError) {
-            console.error("User insertion error:", insertError);
-          } else {
-            console.log("User inserted successfully:", insertData);
-          }
-        }
-      } else {
-        const { data: userData, error: userError } = await supabase
+      // If user doesn't exist, insert new user
+      if (!userData && userDataInfo && userNameMeta) {
+        const { data: insertData, error: insertError } = await supabase
           .from("users")
-          .select("id")
-          .eq("email", emailCred)
-          .maybeSingle(); // Use maybeSingle() to handle zero rows gracefully
+          .insert([
+            {
+              id: userDataInfo.id,
+              email: userDataInfo.email ?? null,
+              password: "google-oauth-placeholder",
+              provider: userDataInfo.app_metadata.provider ?? null,
+              display_name: userNameMeta.name,
+              created_at: new Date().toISOString(),
+            },
+          ]);
 
-        if (userError) {
-          console.error("Error fetching user:", userError);
-          return;
-        }
-
-        const userDataInfo = data?.session?.user;
-        const userNameMeta = data?.user?.user_metadata;
-        if (!userData && userDataInfo && userNameMeta) {
-          const { data: insertData, error: insertError } = await supabase
-            .from("users")
-            .insert([
-              {
-                id: userDataInfo.id,
-                email: userDataInfo.email ?? null,
-                password: "google-oauth-placeholder",
-                provider: userDataInfo.app_metadata.provider ?? null,
-                display_name: userNameMeta.name,
-                created_at: new Date().toISOString(),
-              },
-            ]);
-
-          if (insertError) {
-            console.error("User insertion error:", insertError);
-          } else {
-            console.log("User inserted successfully:", insertData);
-          }
+        if (insertError) {
+          console.error("User insertion error:", insertError);
+        } else {
+          console.log("User inserted successfully:", insertData);
         }
       }
 
       console.log("Signed in successfully:", data);
-      if (role == "Employer") {
-        router.push("/overview");
-      } else {
-        router.push("/jobs");
-      }
+      router.push("/jobs");
     } catch (error) {
       console.error("Error in sign-in process:", error);
     } finally {

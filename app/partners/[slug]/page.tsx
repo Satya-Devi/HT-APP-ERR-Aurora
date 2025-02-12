@@ -29,17 +29,20 @@ import classes from "../partner.module.css";
 import { RatingComponent } from "@/components/Rating/Rating";
 
 const fetchCareerService = async (slug: string) => {
+  console.log("sslluugg",slug);
   const client = getStoryblokApi();
   const response = await client.get(`cdn/stories/partners/${slug}`, {
+    
     version: "published",
   });
+  console.log("response",response);
   return response.data.story;
 };
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const supabase = createClient();
   const story = await fetchCareerService(params.slug);
-
+console.log("story", story);
   const { data: jobs, error: error } = await supabase
     .from("jobs")
     .select()
@@ -51,7 +54,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
     story.content.glassdoor_company_id
   );
 
-  const rating = glassdoorData?.rating ? glassdoorData.rating : "N/A";
+  const rating = glassdoorData?.rating ? glassdoorData.rating : 0;
   const reviewCount = 0;
 
   return (
@@ -74,7 +77,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 </Text> */}
 
                 <Group>
-                  <CardImage employer_logo={story.content.logo.filename} />
+                  <CardImage employer_logo={story?.content?.logo?.filename} />
                   <Title
                     ta="left"
                     order={1}
@@ -314,7 +317,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                   />
                   <Group gap={0} align="center">
                     <RatingComponent rating={rating || 0} />
-                    <Text fw={500} ml={2} mb={5}>| {reviewCount} reviews</Text>
+                    <Text fw={500} ml={2} mb={5}>| {reviewCount} reviews {rating}</Text>
                   </Group>
                 </CardSection>
               </Card>

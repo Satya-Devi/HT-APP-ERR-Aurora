@@ -80,6 +80,7 @@ export default async function Page({
                   searchParams={searchParams}
                   page={page}
                   itemsPerPage={itemsPerPage}
+                  // params={{}}
                 />
               </Suspense>
             </GridCol>

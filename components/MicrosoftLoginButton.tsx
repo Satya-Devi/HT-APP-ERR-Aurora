@@ -4,7 +4,7 @@ import { createClient } from "@/utils/supabase/client";
 import { Button } from "@mantine/core";
 import Image from "next/image";
 
-export default function MicrosoftLoginButton({ role }: { role?: string }) {
+export default function MicrosoftLoginButton() {
   const handleLoginWithMicrosoft = async () => {
     try {
       const supabase = createClient();
@@ -12,14 +12,8 @@ export default function MicrosoftLoginButton({ role }: { role?: string }) {
         provider: "azure",
         options: {
           scopes: "email openid profile User.Read",
-          redirectTo:
-            role === "Employer"
-              ? process.env.NEXT_PUBLIC_EMPREDIRECTIONTO!
-              : process.env.NEXT_PUBLIC_REDIRECTIONTO!,
-          //  redirectTo: process.env.NEXT_PUBLIC_REDIRECTIONTO,
-          // redirectTo:role==="Employer"?"http://localhost:3000/auth/empcallback":"http://localhost:3000/auth/callback",
-
-          // redirectTo: "http://localhost:3000/auth/callback"
+          redirectTo: process.env.NEXT_PUBLIC_REDIRECTIONTO,
+          // redirectTo: "http://localhost:3000/"
         },
       });
 

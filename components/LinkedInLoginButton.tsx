@@ -5,7 +5,7 @@ import { Button } from "@mantine/core";
 import { useState } from "react";
 import Image from "next/image";
 
-export default function LinkedInLoginButton({ role }: { role?: string }) {
+export default function LinkedInLoginButton() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLoginWithLinkedIn = async () => {
@@ -15,11 +15,7 @@ export default function LinkedInLoginButton({ role }: { role?: string }) {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "linkedin_oidc",
         options: {
-          redirectTo:
-            role === "Employer"
-              ? process.env.NEXT_PUBLIC_EMPREDIRECTIONTO!
-              : process.env.NEXT_PUBLIC_REDIRECTIONTO!,
-          //redirectTo:role==="Employer"?"http://localhost:3000/auth/empcallback":"http://localhost:3000/auth/callback",
+          redirectTo: process.env.NEXT_PUBLIC_REDIRECTIONTO!,
         },
       });
 

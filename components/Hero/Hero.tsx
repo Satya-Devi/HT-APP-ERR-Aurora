@@ -9,7 +9,6 @@ import BackButton from "../BackButton/BackButton";
 type HeroProps = {
   title: string;
   subtitle: string;
-  role?: string;
   page?: string;
   align: "left" | "center" | "right";
   isHome?: boolean;
@@ -24,7 +23,6 @@ type HeroProps = {
 export function Hero({
   title,
   subtitle,
-  role,
   page = "",
   align,
   isHome = false,
@@ -45,57 +43,14 @@ export function Hero({
       fluid
       px={isHome ? "xl" : undefined}
     >
-      {role === "Employer" ? (
-        <MainNav role="Employer">
-          <Navbar role="Employer" page={page} />
-        </MainNav>
-      ) : (
+     
         <MainNav>
           <Navbar />
         </MainNav>
-      )}
+     
 
       {!isHome &&
-        (role === "Employer" ? (
-          <div className={classes.header}>
-            <div className={classes.backButtonContainer}>
-              {page && (page == "my-jobs") ? (
-                <div
-                  style={{
-                    fill: "#004A93",
-                    color: "transparent",
-                    cursor: "pointer",
-                    width: "48px",
-                    height: "48px",
-                    marginLeft: "20px",
-                    border: "none",
-                    padding: "0",
-                    backgroundColor: "transparent",
-                  }}
-                ></div>
-              ) : (
-                <BackButton
-                  BackButtonStyles={backButtonStyles}
-                  role="Employer"
-                />
-              )}
-            </div>
-            <div className={classes.empinner}>
-              {isPartner ? (
-                <Group ml="30px">
-                  <CardImage employer_logo={employer_logo} />
-                </Group>
-              ) : (
-                <Title
-                  ta={align}
-                  className={`${SFProRounded.className} ${classes.empTitle}`}
-                >
-                  {title}
-                </Title>
-              )}
-            </div>
-          </div>
-        ) : (
+        
           <div className={classes.inner}>
             <BackButton BackButtonStyles={backButtonStyles} />
             {isPartner ? (
@@ -122,7 +77,7 @@ export function Hero({
               </>
             )}
           </div>
-        ))}
+        }
     </Container>
   );
 }

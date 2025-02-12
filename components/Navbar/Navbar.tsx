@@ -7,7 +7,6 @@ import {
   MenuItem,
   MenuTarget,
   Text,
-  Image,
 } from "@mantine/core";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -23,32 +22,14 @@ import {
   IconUser,
   IconUsers,
 } from "@tabler/icons-react";
+import Image from "next/image";
 
-export async function Navbar({ role, page }: { role?: string; page?: string }) {
+export async function Navbar() {
   const supabase = createClient();
-  let emp_user = null;
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  console.log("User data", user);
-  if (role == "Employer") {
-    if (user?.id) {
-      const { data: empData, error: empError } = await supabase
-        .from("employer_details")
-        .select("*")
-        .eq("id", user?.id);
-
-      console.log("SatyaDevi==========", empData);
-      if (empError) {
-        console.error("Error fetching user:", empError);
-        return;
-      }
-      if (empData && empData.length > 0 && empData[0].is_employer_login) {
-        emp_user = true;
-      }
-    }
-  }
 
   const signOut = async () => {
     "use server";
@@ -57,130 +38,15 @@ export async function Navbar({ role, page }: { role?: string; page?: string }) {
     await supabase.auth.signOut();
     return redirect("/login");
   };
-  const empsignOut = async () => {
-    "use server";
 
-    const supabase = createClient();
-    const { data: updateData, error: updateError } = await supabase
-      .from("employer_details")
-      .update({
-        is_employer_login: false,
-      })
-      .eq("id", user?.id);
-    await supabase.auth.signOut();
-
-    return redirect("/employers-login");
-  };
-
-  const employerMenuItems = [
-    {
-      path: "/overview",
-      label: "Overview",
-      id: "overview",
-    },
-    {
-      path: "/post-job",
-      label: "Post a Job",
-      id: "post-job",
-    },
-    {
-      path: "/my-jobs",
-      label: "My Jobs",
-      id: "my-jobs",
-    },
-
-    {
-      path: emp_user ? "/employers-logout" : "/employers-login",
-      label: emp_user ? "Logout" : "Login",
-      id: emp_user ? "logout" : "login",
-    },
-  ];
-
-  return role == "Employer" ? (
+  return (
     <>
       <Link href="/" style={{ textDecoration: "none", cursor: "pointer" }}>
         <Image
           src="/images/logo.png"
           alt="logo"
           width={100}
-          height="auto"
-          className={classes.logo}
-        />
-      </Link>
-
-      <Group align="center" h="100%" visibleFrom="sm" gap={10}>
-        {employerMenuItems.map((item) => (
-          <Menu key={item.id} trigger="hover" openDelay={100} closeDelay={400}>
-            <MenuTarget>
-              {item.id !== "logout" ? (
-                <Link href={item.path} style={{ textDecoration: "none" }}>
-                  <Text
-                    className={classes.link}
-                    style={{
-                      cursor: "pointer",
-                      fontWeight: 600,
-                      borderRadius: page && page === item.id ? "6px" : "",
-                      padding: page && page === item.id ? "6px 23px" : "",
-                      color: page && page === item.id ? "white" : "#004a93",
-                      backgroundColor:
-                        page && page === item.id ? "#004A93" : "",
-                    }}
-                  >
-                    {item.label}
-                  </Text>
-                </Link>
-              ) : (
-                <form action={empsignOut}>
-                  <Button
-                    type="submit"
-                    radius="md"
-                    size="md"
-                    variant="subtle"
-                    color="#004a93"
-                  >
-                    Logout
-                  </Button>
-                </form>
-              )}
-            </MenuTarget>
-          </Menu>
-        ))}
-      </Group>
-      {/* {user ? (
-          <form action={empsignOut}>
-            <Button
-              type="submit"
-              radius="md"
-              size="md"
-              variant="subtle"
-              color="#004a93"
-              style={{border:"1px solid #004A93"}}
-            >
-              Logout
-            </Button>
-          </form>
-        ) : (
-          <Button
-            component="a"
-            href="/employers-login"
-            radius="md"
-            size="md"
-            variant="subtle"
-           color="#004a93"
-           style={{border:"1px solid #004A93"}}
-          >
-            Login
-          </Button>
-        )} */}
-    </>
-  ) : (
-    <>
-      <Link href="/" style={{ textDecoration: "none", cursor: "pointer" }}>
-        <Image
-          src="/images/logo.png"
-          alt="logo"
-          width={100}
-          height={"auto"}
+          height={100}
           className={classes.logo}
         />
       </Link>
@@ -360,16 +226,6 @@ export async function Navbar({ role, page }: { role?: string; page?: string }) {
             Login
           </Button>
         )}
-        <Button
-          component="a"
-          href="/overview"
-          radius="md"
-          size="md"
-          variant="filled"
-          color="blue"
-        >
-          Employers
-        </Button>
       </Group>
     </>
   );

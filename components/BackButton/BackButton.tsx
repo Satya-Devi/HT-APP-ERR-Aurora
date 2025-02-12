@@ -11,8 +11,7 @@ type BackButtonProps = {
 // export default function BackButton({ BackButtonStyles }: BackButtonProps, {role}:{role?:string}) {
 export default function BackButton({
   BackButtonStyles,
-  role,
-}: BackButtonProps & { role?: string }) {
+}: BackButtonProps) {
   const initialRoute = useRef<string | null>(null);
 
   useLayoutEffect(() => {
@@ -35,7 +34,7 @@ export default function BackButton({
   return (
     <IconCircleArrowLeftFilled
       className={
-        role && role == "Employer" ? classes.ebackButton : classes.backButton
+       classes.backButton
       }
       style={BackButtonStyles}
       onClick={handleBackClick}

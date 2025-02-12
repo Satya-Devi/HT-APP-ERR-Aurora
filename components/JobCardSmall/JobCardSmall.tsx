@@ -89,61 +89,140 @@ const JobCardSmall = ({
     return false;
   };
 
-  const handleSaveJob = async (event: React.MouseEvent<HTMLElement>) => {
+  // const handleSaveJob = async (event: React.MouseEvent<HTMLElement>) => {
+  //   event.stopPropagation();
+  //   event.preventDefault();
+  //   try {
+  //     if (!userId) {
+  //       return (window.location.href = "/login");
+  //     }
+  //     await saveJob(userId, job);
+  //     setIsSaved(true);
+  //     const savedJobs = JSON.parse(localStorage.getItem("savedJobs") || "[]");
+  //     localStorage.setItem("savedJobs", JSON.stringify([...savedJobs, job.id]));
+  //     notifications.show({
+  //       title: "Job saved!",
+  //       message: "The job has been saved successfully!",
+  //       color: "green",
+  //     });
+  //   } catch (err) {
+  //     notifications.show({
+  //       title: "Oops...",
+  //       message: "Unable to save the job. Please try again later.",
+  //       color: "red",
+  //     });
+  //   }
+  // };
+
+  const handleSaveJob = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
     event.preventDefault();
+    
     try {
       if (!userId) {
-        return (window.location.href = "/login");
+        window.location.href = "/login";
+        return;
       }
-      await saveJob(userId, job);
-      setIsSaved(true);
-      const savedJobs = JSON.parse(localStorage.getItem("savedJobs") || "[]");
-      localStorage.setItem("savedJobs", JSON.stringify([...savedJobs, job.id]));
-      notifications.show({
-        title: "Job saved!",
-        message: "The job has been saved successfully!",
-        color: "green",
-      });
+  
+      saveJob(userId, job)
+        .then(() => {
+          setIsSaved(true);
+          const savedJobs = JSON.parse(localStorage.getItem("savedJobs") || "[]");
+          localStorage.setItem("savedJobs", JSON.stringify([...savedJobs, job.id]));
+  
+          notifications.show({
+            title: "Job saved!",
+            message: "The job has been saved successfully!",
+            color: "green",
+          });
+        })
+        .catch(() => {
+          notifications.show({
+            title: "Oops...",
+            message: "Unable to save the job. Please try again later.",
+            color: "red",
+          });
+        });
+  
     } catch (err) {
       notifications.show({
         title: "Oops...",
-        message: "Unable to save the job. Please try again later.",
+        message: "An unexpected error occurred. Please try again later.",
         color: "red",
       });
     }
   };
+  
+  // const handleUnsaveJob = async (event: React.MouseEvent<HTMLElement>) => {
+  //   event.stopPropagation();
+  //   event.preventDefault();
+  //   try {
+  //     if (!userId) {
+  //       return (window.location.href = "/login");
+  //     }
+  //     await unsaveJob(userId, job.id);
+  //     setIsSaved(false);
 
+  //     const savedJobs = JSON.parse(
+  //       localStorage.getItem("savedJobs") || "[]"
+  //     ).filter((id: string) => id !== job.id);
+  //     localStorage.setItem("savedJobs", JSON.stringify(savedJobs));
 
-  const handleUnsaveJob = async (event: React.MouseEvent<HTMLElement>) => {
+  //     notifications.show({
+  //       title: "Job removed",
+  //       message: "The job has been removed from your saved jobs.",
+  //       color: "green",
+  //     });
+  //   } catch (err) {
+  //     notifications.show({
+  //       title: "Oops...",
+  //       message: "Unable to remove the job. Please try again later.",
+  //       color: "red",
+  //     });
+  //   }
+  // };
+  const handleUnsaveJob = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
     event.preventDefault();
+  
     try {
       if (!userId) {
-        return (window.location.href = "/login");
+        window.location.href = "/login";
+        return;
       }
-      await unsaveJob(userId, job.id);
-      setIsSaved(false);
-
-      const savedJobs = JSON.parse(
-        localStorage.getItem("savedJobs") || "[]"
-      ).filter((id: string) => id !== job.id);
-      localStorage.setItem("savedJobs", JSON.stringify(savedJobs));
-
-      notifications.show({
-        title: "Job removed",
-        message: "The job has been removed from your saved jobs.",
-        color: "green",
-      });
+  
+      unsaveJob(userId, job.id)
+        .then(() => {
+          setIsSaved(false);
+  
+          const savedJobs = JSON.parse(localStorage.getItem("savedJobs") || "[]").filter(
+            (id: string) => id !== job.id
+          );
+          localStorage.setItem("savedJobs", JSON.stringify(savedJobs));
+  
+          notifications.show({
+            title: "Job removed",
+            message: "The job has been removed from your saved jobs.",
+            color: "green",
+          });
+        })
+        .catch(() => {
+          notifications.show({
+            title: "Oops...",
+            message: "Unable to remove the job. Please try again later.",
+            color: "red",
+          });
+        });
+  
     } catch (err) {
       notifications.show({
         title: "Oops...",
-        message: "Unable to remove the job. Please try again later.",
+        message: "An unexpected error occurred. Please try again later.",
         color: "red",
       });
     }
   };
-
+  
   const handleJobClick = () => {
     router.push(`/jobs/${job.id}`);
   }
