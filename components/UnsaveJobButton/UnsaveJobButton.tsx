@@ -19,25 +19,39 @@ export default function UnsaveJobButton({
   onUnsave,
 }: UnsaveJobButtonProps) {
   
-  const handleUnsaveJob = async (event:React.MouseEvent<HTMLElement>) => {
+  const handleUnsaveJob = (event: React.MouseEvent<HTMLElement>) => {
     try {
       event.stopPropagation();
       event.preventDefault();
-      await unsaveJob(userId, jobId);
-      notifications.show({
-        title: "Job removed.",
-        message: "The job is no longer being tracked to your saved jobs.",
-        color: "green",
-      });
-      onUnsave(event);
+  
+      unsaveJob(userId, jobId)
+        .then(() => {
+          notifications.show({
+            title: "Job removed.",
+            message:
+              "The job is no longer being tracked in your saved jobs.",
+            color: "green",
+          });
+          onUnsave(event);
+        })
+        .catch((err) => {
+          notifications.show({
+            title: "Oops...",
+            message: "Unable to remove the job. Please try again later.",
+            color: "red",
+          });
+          console.error("Error unsaving job:", err);
+        });
     } catch (err) {
       notifications.show({
         title: "Oops...",
         message: "Unable to remove the job. Please try again later.",
         color: "red",
       });
+      console.error("Synchronous error unsaving job:", err);
     }
   };
+  
 
   return (
     <Button

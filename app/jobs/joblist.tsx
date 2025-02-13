@@ -33,7 +33,7 @@ export async function JobList({
   itemsPerPage,
   user,
 }: JobListProps) {
-
+try{
     const { jobs, error, count } = await fetchJobs({
       query: searchParams?.query || "",
       location: searchParams?.location || "",
@@ -140,5 +140,17 @@ export async function JobList({
         <PaginatedSearch total={count || 0} itemsPerPage={itemsPerPage} />
       </>
     );
- 
+  }
+  catch (error) {
+    console.error("Error in JobList:", error);
+    return (
+      <Container>
+        <Group justify="center">
+          <Text c="dimmed" size="lg" fw={500} ta="center">
+            An error occurred. Please try again.
+          </Text>
+        </Group>
+      </Container>
+    );
+  }
 }

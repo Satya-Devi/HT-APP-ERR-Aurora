@@ -3,7 +3,6 @@ import { CardAICTA } from "@/components/CardAICTA/CardAICTA";
 import { CardContentCTA } from "@/components/CardContentCTA/CardContentCTA";
 import { CardImage } from "@/components/CardImage/CardImage";
 import { ContainedNav } from "@/components/ContainedNav/ContainedNav";
-import { Job } from "@/components/Job/Job";
 import SaveJobButton from "@/components/SaveJobButton";
 import { capitalize } from "@/utils/supabase/dto";
 import { createClient } from "@/utils/supabase/server";

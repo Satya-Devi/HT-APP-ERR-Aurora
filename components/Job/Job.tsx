@@ -55,27 +55,43 @@ export function Job({ userId, job,isTrackedPage=false }: JobProps) {
 
   const Buttons = ({ userId }: { userId: string | null }) => {
     // if (!userId) return null;
-    const handleSaveJob = async (event:React.MouseEvent<HTMLElement>) => {
+    const handleSaveJob = (event: React.MouseEvent<HTMLElement>) => {
       event.stopPropagation();
       event.preventDefault();
+    
+      if (!userId) {
+        window.location.href = "/login";
+        return;
+      }
+    
       try {
-        if(!userId) {
-         return window.location.href = "/login";
-        }
-        await saveJob(userId, job);
-        notifications.show({
-          title: "Job saved!",
-          message: "The job has been saved successfully!",
-          color: "green",
-        });
+        saveJob(userId, job)
+          .then(() => {
+            notifications.show({
+              title: "Job saved!",
+              message: "The job has been saved successfully!",
+              color: "green",
+            });
+          })
+          .catch((err) => {
+            notifications.show({
+              title: "Oops...",
+              message: "Unable to save the job. Please try again later.",
+              color: "red",
+            });
+            console.error("Error saving job:", err);
+          });
       } catch (err) {
+        // This catch block is for any synchronous errors
         notifications.show({
           title: "Oops...",
           message: "Unable to save the job. Please try again later.",
           color: "red",
         });
+        console.error("Synchronous error saving job:", err);
       }
-    }
+    };
+    
     const handleApply=(event:React.MouseEvent<HTMLElement>)=>{
       event.stopPropagation();
       event.preventDefault();

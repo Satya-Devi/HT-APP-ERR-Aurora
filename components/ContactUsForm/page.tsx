@@ -34,7 +34,7 @@ const ContactUsForm: React.FC<ContactUsFormProps> = ({ leftMargin,onSubmit }) =>
     opacity: "0px",
     marginLeft: leftMargin,
   };
-  const handeSubmit = async (event: any) => {
+  const handeSubmit = (event: any) => {
     event.preventDefault();
     let name = event.target.elements.name.value;
     let email = event.target.elements.email.value;
@@ -42,7 +42,7 @@ const ContactUsForm: React.FC<ContactUsFormProps> = ({ leftMargin,onSubmit }) =>
     if (name && email && message) {
       console.log(name, email, message);
       if (onSubmit) {
-        await onSubmit({ name, email, message });
+         onSubmit({ name, email, message });
         notifications.show({
           title: "Form Submitted !",
           message: "Thank you for contacting us!",

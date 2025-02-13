@@ -25,7 +25,10 @@ import "./global.css";
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
+console.log("Access Token",process.env.STORYBLOK_ACCESS_TOKEN)
+// console.log("Access Token",process.env.NEXT_PUBLIC_STORYBLOK_ACCESS_TOKEN)
 
+// if(process.env.STORYBLOK_ACCESS_TOKEN){
 storyblokInit({
   accessToken: process.env.STORYBLOK_ACCESS_TOKEN,
   use: [apiPlugin],
@@ -36,6 +39,7 @@ storyblokInit({
     grid: Grid,
   },
 });
+// }
 
 // export const metadata = {
 //   metadataBase: new URL(defaultUrl),

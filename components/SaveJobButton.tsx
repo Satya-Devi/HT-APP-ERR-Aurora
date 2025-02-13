@@ -12,7 +12,7 @@ type SaveJobButtonProps = {
 };
 
 export default function SaveJobButton({ userId, job }: SaveJobButtonProps) {
-  const handleSaveJob = async () => {
+  const handleSaveJob = () => {
     if (!userId || !job?.id) {
       notifications.show({
         title: "Error",
@@ -21,7 +21,7 @@ export default function SaveJobButton({ userId, job }: SaveJobButtonProps) {
       });
       return;
     }
-
+  
     try {
       const jobData: JobData = {
         id: job.id,
@@ -35,19 +35,28 @@ export default function SaveJobButton({ userId, job }: SaveJobButtonProps) {
         employer_logo: job.employer_logo || null,
         job_id: job.id,
       };
-
-      const result: any = await saveJob(userId, jobData);
-
-      if (result?.error) {
-        throw new Error(result.error);
-      }
-
-      notifications.show({
-        title: "Job saved!",
-        message: "The job has been saved successfully!",
-        color: "green",
-      });
+  
+      saveJob(userId, jobData)
+        .then((result: any) => {
+          if (result?.error) {
+            // If there's an error in the result, throw an error to be caught by .catch()
+            throw new Error(result.error);
+          }
+          notifications.show({
+            title: "Job saved!",
+            message: "The job has been saved successfully!",
+            color: "green",
+          });
+        })
+        .catch((err) => {
+          notifications.show({
+            title: "Save failed",
+            message: "Unable to save the job. Please try again later.",
+            color: "red",
+          });
+        });
     } catch (err) {
+      // This catch block handles any synchronous errors
       notifications.show({
         title: "Save failed",
         message: "Unable to save the job. Please try again later.",
@@ -55,6 +64,7 @@ export default function SaveJobButton({ userId, job }: SaveJobButtonProps) {
       });
     }
   };
+  
 
   return (
     <Button

@@ -17,24 +17,38 @@ export default function ResetPassword({ searchParams }: Props) {
   const [errorM, setErrorM] = useState(false)
   const [message, setMessage] = useState("")
 
-  const handleResetPassword = async (formData: FormData) => {
+  const handleResetPassword = (formData: FormData) => {
     const password = formData.get("password") as string;
     const confirm_password = formData.get("confirm password") as string;
-    console.log(password, confirm_password)
-    if (password !== confirm_password) return setMessage("Passwords don't match!"), setErrorM(true);
-    const supabase = createClient();
-    try {
-      setErrorM(false)
-      const { data, error } = await supabase.auth.updateUser({
-        password
-      });
-      if (error) {
-        return setMessage("Something went wrong!! Please try later."), setErrorM(true);
-      }
-      if (data) setMessage("Password changed successfully!"), setSuccess(!success), setErrorM(false);
-    } catch (error) {
-      console.log(error);
+    console.log(password, confirm_password);
+    
+    if (password !== confirm_password) {
+      setMessage("Passwords don't match!");
+      setErrorM(true);
+      return;
     }
+  
+    const supabase = createClient();
+    setErrorM(false);
+  
+    supabase.auth.updateUser({
+      password
+    })
+    .then(({ data, error }) => {
+      if (error) {
+        setMessage("Something went wrong!! Please try later.");
+        setErrorM(true);
+        return;
+      }
+      if (data) {
+        setMessage("Password changed successfully!");
+        setSuccess(!success);
+        setErrorM(false);
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
   };
 
   useEffect(()=>{

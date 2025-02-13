@@ -16,81 +16,97 @@ export default function GoogleLoginButton() {
   const supabase = createClient();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleCredentialResponse = async (response: any) => {
+  const handleCredentialResponse = (response: any) => {
     console.log("Received ID token:", response);
+    setIsLoading(true);
+  
     try {
-      setIsLoading(true);
-
       // Check for ID token presence
       if (!response.credential) {
         throw new Error("No ID token received");
       }
-
+  
+      let signInData: any; // To hold the sign-in data for later use
+  
       // Authenticate with Supabase using the ID token
-      const { data, error } = await supabase.auth.signInWithIdToken({
-        provider: "google",
-        token: response.credential,
-      });
-
-      // Handle sign-in error early
-      if (error) {
-        console.error("Authentication error:", error);
-        throw error;
-      }
-
-      console.log("Sign-in data:", data);
-
-      const emailCred = data?.user?.email;
-      if (!emailCred) {
-        console.warn("User data is not available");
-        return;
-      }
-
-      // Check if the user already exists in the users table
-      const { data: userData, error: userError } = await supabase
-        .from("users")
-        .select("id")
-        .eq("email", emailCred)
-        .maybeSingle(); // Use maybeSingle() to handle zero rows gracefully
-
-      if (userError) {
-        console.error("Error fetching user:", userError);
-        return;
-      }
-
-      const userDataInfo = data?.session?.user;
-      const userNameMeta = data?.user?.user_metadata;
-
-      // If user doesn't exist, insert new user
-      if (!userData && userDataInfo && userNameMeta) {
-        const { data: insertData, error: insertError } = await supabase
-          .from("users")
-          .insert([
-            {
-              id: userDataInfo.id,
-              email: userDataInfo.email ?? null,
-              password: "google-oauth-placeholder",
-              provider: userDataInfo.app_metadata.provider ?? null,
-              display_name: userNameMeta.name,
-              created_at: new Date().toISOString(),
-            },
-          ]);
-
-        if (insertError) {
-          console.error("User insertion error:", insertError);
-        } else {
-          console.log("User inserted successfully:", insertData);
-        }
-      }
-
-      console.log("Signed in successfully:", data);
-      router.push("/jobs");
+      supabase.auth
+        .signInWithIdToken({
+          provider: "google",
+          token: response.credential,
+        })
+        .then(({ data, error }) => {
+          if (error) {
+            console.error("Authentication error:", error);
+            throw error;
+          }
+          signInData = data;
+          console.log("Sign-in data:", data);
+  
+          const emailCred = data?.user?.email;
+          if (!emailCred) {
+            console.warn("User data is not available");
+            return Promise.resolve(null); // Early exit if email is missing
+          }
+  
+          // Check if the user already exists in the users table
+          return supabase
+            .from("users")
+            .select("id")
+            .eq("email", emailCred)
+            .maybeSingle();
+        })
+        .then((userQueryResult) => {
+          // userQueryResult might be undefined if the previous promise resolved with null
+          if (!userQueryResult) return;
+  
+          const { data: userData, error: userError } = userQueryResult;
+          if (userError) {
+            console.error("Error fetching user:", userError);
+            return;
+          }
+  
+          // If user doesn't exist, insert new user
+          if (!userData && signInData) {
+            const userDataInfo = signInData?.session?.user;
+            const userNameMeta = signInData?.user?.user_metadata;
+  
+            if (userDataInfo && userNameMeta) {
+              return supabase.from("users").insert([
+                {
+                  id: userDataInfo.id,
+                  email: userDataInfo.email ?? null,
+                  password: "google-oauth-placeholder",
+                  provider: userDataInfo.app_metadata.provider ?? null,
+                  display_name: userNameMeta.name,
+                  created_at: new Date().toISOString(),
+                },
+              ]);
+            }
+          }
+          return;
+        })
+        .then((insertResult) => {
+          // If a new user was inserted, log the result
+          if (insertResult && insertResult.error) {
+            console.error("User insertion error:", insertResult.error);
+          } else if (insertResult) {
+            console.log("User inserted successfully:", insertResult.data);
+          }
+          console.log("Signed in successfully:", signInData);
+          router.push("/jobs");
+        })
+        .catch((error) => {
+          console.error("Error in sign-in process:", error);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     } catch (error) {
-      console.error("Error in sign-in process:", error);
-    } finally {
+      console.error("Synchronous error in sign-in process:", error);
       setIsLoading(false);
     }
   };
+  
 
   useEffect(() => {
     const loadGoogleScript = () => {

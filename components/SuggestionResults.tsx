@@ -35,26 +35,34 @@ export default function SuggestionResults({
   const [activePage, setActivePage] = useState(1);
   const pageSize = 10;
 
-  const handleGenerateMore = async () => {
+  const handleGenerateMore = () => {
     setLoading(true);
     try {
-      // const jobs = await generateJobSuggestions(value);
-
-      const query = value.toLowerCase()
-      .replace(/(?:^|\s)[a-z]/g, function (m) {
-        return m.toUpperCase();
-      });
-
-      const jobs = await getMatchingJobs(query)
-      setGeneratedJobs(jobs || []);
-      setActivePage(1)
+      // Build the query string synchronously
+      const query = value
+        .toLowerCase()
+        .replace(/(?:^|\s)[a-z]/g, (m) => m.toUpperCase());
+  
+      getMatchingJobs(query)
+        .then((jobs) => {
+          setGeneratedJobs(jobs || []);
+          setActivePage(1);
+        })
+        .catch((error) => {
+          console.error("Error generating job suggestions:", error);
+          setGeneratedJobs([]);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     } catch (error) {
-      console.error("Error generating job suggestions:", error);
+      // This catch block handles any synchronous errors (e.g. issues with query creation)
+      console.error("Synchronous error generating job suggestions:", error);
       setGeneratedJobs([]);
-    } finally {
       setLoading(false);
     }
   };
+  
 
   const sortedJobs = generatedJobs.sort((a, b) => {
     return b.relevancy_score - a.relevancy_score;

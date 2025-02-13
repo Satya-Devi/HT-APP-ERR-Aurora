@@ -89,31 +89,7 @@ const JobCardSmall = ({
     return false;
   };
 
-  // const handleSaveJob = async (event: React.MouseEvent<HTMLElement>) => {
-  //   event.stopPropagation();
-  //   event.preventDefault();
-  //   try {
-  //     if (!userId) {
-  //       return (window.location.href = "/login");
-  //     }
-  //     await saveJob(userId, job);
-  //     setIsSaved(true);
-  //     const savedJobs = JSON.parse(localStorage.getItem("savedJobs") || "[]");
-  //     localStorage.setItem("savedJobs", JSON.stringify([...savedJobs, job.id]));
-  //     notifications.show({
-  //       title: "Job saved!",
-  //       message: "The job has been saved successfully!",
-  //       color: "green",
-  //     });
-  //   } catch (err) {
-  //     notifications.show({
-  //       title: "Oops...",
-  //       message: "Unable to save the job. Please try again later.",
-  //       color: "red",
-  //     });
-  //   }
-  // };
-
+ 
   const handleSaveJob = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
     event.preventDefault();
@@ -153,34 +129,7 @@ const JobCardSmall = ({
     }
   };
   
-  // const handleUnsaveJob = async (event: React.MouseEvent<HTMLElement>) => {
-  //   event.stopPropagation();
-  //   event.preventDefault();
-  //   try {
-  //     if (!userId) {
-  //       return (window.location.href = "/login");
-  //     }
-  //     await unsaveJob(userId, job.id);
-  //     setIsSaved(false);
-
-  //     const savedJobs = JSON.parse(
-  //       localStorage.getItem("savedJobs") || "[]"
-  //     ).filter((id: string) => id !== job.id);
-  //     localStorage.setItem("savedJobs", JSON.stringify(savedJobs));
-
-  //     notifications.show({
-  //       title: "Job removed",
-  //       message: "The job has been removed from your saved jobs.",
-  //       color: "green",
-  //     });
-  //   } catch (err) {
-  //     notifications.show({
-  //       title: "Oops...",
-  //       message: "Unable to remove the job. Please try again later.",
-  //       color: "red",
-  //     });
-  //   }
-  // };
+ 
   const handleUnsaveJob = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
     event.preventDefault();

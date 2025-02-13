@@ -21,10 +21,19 @@ const CardCompany: React.FC<CardCompanyProps> = ({
     glassDoorRating();
   }, []);
 
-  const glassDoorRating = async () => {
-    if (!id) return;
-    const response = await fetchGlassdoorRating(id);
-  };
+ const glassDoorRating = () => {
+  if (!id) return;
+  
+  fetchGlassdoorRating(id)
+    .then((response) => {
+      // Process the response as needed
+      console.log("Glassdoor rating fetched:", response);
+    })
+    .catch((error) => {
+      console.error("Error fetching Glassdoor rating:", error);
+    });
+};
+
 
   return (
     <div className={styles.card}>

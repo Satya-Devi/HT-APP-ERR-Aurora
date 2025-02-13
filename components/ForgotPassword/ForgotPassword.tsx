@@ -12,23 +12,28 @@ export default function ForgotPassword() {
   const [errorM, setErrorM] = useState(false)
   const [message, setMessage] = useState("")
 
-  const handleForgotPassword = async (formData: FormData) => {
+  const handleForgotPassword = (formData: FormData) => {
     const email = formData.get("email") as string;
     const supabase = createClient();
-    try {
-      setErrorM(false)
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: "https://happytechies.com/login"
-      });
+    
+    setErrorM(false);
+    
+    supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: "https://happytechies.com/login"
+    })
+    .then(({ error }) => {
       if (error) {
-        return setMessage("Something went wrong!! Please try later."), setErrorM(true);
+        setMessage("Something went wrong!! Please try later.");
+        setErrorM(true);
+        return;
       }
-      setMessage("Success! A password reset email has been sent.")
-      setSuccess(!success)
-      setErrorM(false)
-    } catch (error) {
-      console.log(error)
-    }
+      setMessage("Success! A password reset email has been sent.");
+      setSuccess(!success);
+      setErrorM(false);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
   };
 
   useEffect(()=> {
