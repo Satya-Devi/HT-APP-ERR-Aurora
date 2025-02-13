@@ -23,26 +23,31 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { getStoryblokApi } from "@storyblok/react/rsc";
-import { IconCertificate, IconMapPin, IconPinned, IconUsers, IconTrophy } from "@tabler/icons-react";
+import {
+  IconCertificate,
+  IconMapPin,
+  IconPinned,
+  IconUsers,
+  IconTrophy,
+} from "@tabler/icons-react";
 import Link from "next/link";
 import classes from "../partner.module.css";
 import { RatingComponent } from "@/components/Rating/Rating";
 
 const fetchCareerService = async (slug: string) => {
-  console.log("sslluugg",slug);
+  console.log("sslluugg", slug);
   const client = getStoryblokApi();
   const response = await client.get(`cdn/stories/partners/${slug}`, {
-    
     version: "published",
   });
-  console.log("response",response);
+  console.log("response", response);
   return response.data.story;
 };
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const supabase = createClient();
   const story = await fetchCareerService(params.slug);
-console.log("story", story);
+  console.log("story", story);
   const { data: jobs, error: error } = await supabase
     .from("jobs")
     .select()
@@ -67,7 +72,10 @@ console.log("story", story);
         align="center"
         backButtonStyles={{ marginLeft: "20px" }}
       />
-      <Container size="xl" className={`${SFProRounded.className} ${classes.container_detail}`}>
+      <Container
+        size="xl"
+        className={`${SFProRounded.className} ${classes.container_detail}`}
+      >
         <main>
           <Grid>
             <GridCol span={{ base: 12, md: 8 }}>
@@ -281,8 +289,8 @@ console.log("story", story);
                         margin: 0,
                       }}
                     >
-                      {story.content.specializations
-                        .split(",")
+                      {story.content?.specializations
+                        ?.split(",")
                         .map((specialization: string) => (
                           <li
                             key={specialization.trim()}
@@ -317,7 +325,9 @@ console.log("story", story);
                   />
                   <Group gap={0} align="center">
                     <RatingComponent rating={rating || 0} />
-                    <Text fw={500} ml={2} mb={5}>| {reviewCount} reviews {rating}</Text>
+                    <Text fw={500} ml={2} mb={5}>
+                      | {reviewCount} reviews {rating}
+                    </Text>
                   </Group>
                 </CardSection>
               </Card>
