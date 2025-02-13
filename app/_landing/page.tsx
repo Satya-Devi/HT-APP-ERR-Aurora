@@ -16,7 +16,7 @@ export default async function Landing() {
   } = await supabase.auth.getUser();
   return (
     <>
-      <head>
+      {/* <head>
         <title>
           HappyTechies – Your Gateway to Microsoft Tech Careers
         </title>
@@ -24,7 +24,7 @@ export default async function Landing() {
           name="description"
           content="HappyTechies connects tech talent with Microsoft job opportunities. Explore top careers in Microsoft technologies. Start your journey today!"
         />
-      </head>
+      </head> */}
       <Hero
         title="Explore all job openings"
         subtitle="Home"
