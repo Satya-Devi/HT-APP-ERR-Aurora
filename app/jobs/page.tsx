@@ -44,13 +44,13 @@ export default async function Page({
 
   return (
     <>
-      <head>
+      {/* <head>
         <title>Microsoft Tech Job Listings</title>
         <meta
           name="description"
           content="Find the latest Microsoft-focused tech jobs. Browse roles in Azure, Dynamics, Power BI, and more. Apply today with HappyTechies."
         />
-      </head>
+      </head> */}
       <Hero
         title="Stop the endless scroll of job searching"
         subtitle="Only relevent Microsoft Technology jobs here"

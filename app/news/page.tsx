@@ -35,10 +35,10 @@ export default async function Page() {
 
   return (
     <>
-      <head>
+      {/* <head>
         <title>Microsoft Tech News</title>
         <meta name="description" content="Get the latest updates and news from the world of Microsoft. Explore key developments, product launches, and tech advancements." />
-      </head>
+      </head> */}
       <Hero
         title="Stay Ahead of the curve"
         subtitle="Microsoft Technologies News"

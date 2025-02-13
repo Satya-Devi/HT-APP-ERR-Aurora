@@ -60,10 +60,10 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
     return (
       <>
-        <head>
+        {/* <head>
           <title>{story.content.title}</title>
           <meta name="description" content={story.content.description} />
-        </head>
+        </head> */}
         <Hero
           title={story.content.title}
           subtitle="Perspectives"

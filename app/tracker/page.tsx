@@ -56,7 +56,7 @@ export default async function Page({
 
   return (
     <>
-      <head>
+      {/* <head>
         <title>
           My Jobs – Your Saved Microsoft Career Opportunities
         </title>
@@ -64,7 +64,7 @@ export default async function Page({
           name="description"
           content="Keep track of your saved job postings. Review and apply to your preferred Microsoft tech roles on HappyTechies."
         />
-      </head>
+      </head> */}
       <Hero title="My Dashboard" subtitle="" align="center" />
       {/* <Container style={{ width: "100%" }} ml="30px"> */}
       <div>

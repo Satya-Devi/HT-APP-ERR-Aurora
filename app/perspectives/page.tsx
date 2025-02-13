@@ -63,10 +63,10 @@ export default async function Page({
 
   return (
     <>
-      <head>
+      {/* <head>
         <title>Perspectives – Career Insights and Microsoft Tech Trends</title>
         <meta name="description" content="Dive into expert insights, career tips, and the latest trends in Microsoft technologies. Stay ahead with curated content from HappyTechies." />
-      </head>
+      </head> */}
       <div className={SFProRounded.className}>
         <Hero
           title="Perspectives "

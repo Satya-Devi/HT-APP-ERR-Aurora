@@ -33,13 +33,13 @@ export default async function Page({
 
   return (
     <>
-      <head>
+      {/* <head>
         <title>Professional Resources – Grow Your Career with HappyTechies</title>
         <meta
           name="description"
           content="Access a curated directory of resources to enhance your professional skills. Learn, grow, and succeed in the world of Microsoft technologies."
         />
-      </head>
+      </head> */}
       <Hero
         title="Career Growth Resources"
         subtitle="We have created a list of helpful resources to empower you in growing your career"

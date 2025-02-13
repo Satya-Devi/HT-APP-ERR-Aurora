@@ -33,7 +33,7 @@ export async function JobList({
   itemsPerPage,
   user,
 }: JobListProps) {
-  try {
+
     const { jobs, error, count } = await fetchJobs({
       query: searchParams?.query || "",
       location: searchParams?.location || "",
@@ -118,7 +118,7 @@ export async function JobList({
           </Container>
         )}
 
-        {jobs?.map((job) => (
+        {jobs && jobs?.length > 0 && jobs?.map((job) => (
           <Container
             px={0}
             my="sm"
@@ -140,11 +140,5 @@ export async function JobList({
         <PaginatedSearch total={count || 0} itemsPerPage={itemsPerPage} />
       </>
     );
-  } catch (err) {
-    return (
-      <Container px={0}>
-        <Text>Error loading jobs. Please try again later.</Text>
-      </Container>
-    );
-  }
+ 
 }

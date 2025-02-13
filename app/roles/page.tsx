@@ -89,13 +89,13 @@ export default async function Page({
   );
   return (
     <>
-      <head>
+      {/* <head>
         <title>Microsoft Roles – Explore Career Paths and Certifications</title>
         <meta
           name="description"
           content="Find your ideal Microsoft role with relevant certifications and learning paths. Advance your career in Azure, Power BI, Dynamics, and more."
         />
-      </head>
+      </head> */}
       <Hero
         title="Roles in Microsoft Technologies"
         subtitle="Level Up your skills. Get certified. Find relevant jobs."

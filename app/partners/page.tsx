@@ -45,13 +45,13 @@ export default async function Page({
 
   return (
     <>
-      <head>
+      {/* <head>
         <title>Explore Microsoft Partners</title>
         <meta
           name="description"
           content="Discover Microsoft Partner companies and their job openings. Connect with leading organizations and find your next career move with HappyTechies."
         />
-      </head>
+      </head> */}
       <div className={SFProRounded.className}>
         <Hero
           title="Microsoft's Trusted Partners"

@@ -169,13 +169,13 @@ export default async function Page({ params }: { params: { id: string } }) {
 
   return (
     <>
-    <head>
+    {/* <head>
         <title>{job.job_title}</title>
         <meta
           name="description"
           content={job.job_description}
         />
-      </head>
+      </head> */}
       <ContainedNav />
       <Container size="xl">
         <main>
