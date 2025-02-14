@@ -1,7 +1,8 @@
-import { Card, Image, Stack, Text } from "@mantine/core";
+import { Card,  Stack, Text } from "@mantine/core";
 import classes from "./NewsCard.module.css";
 import { SFProRounded } from "@/app/layout";
 import moment from "moment";
+import Image from "next/image";
  
 type NewsProps = {
     title: string;
@@ -18,7 +19,7 @@ const NewsCard = ({ title, description, image, url ,published_datetime_utc }: Ne
     }
     return (
         <Card onClick={handleClick} className={classes.card}>
-            <Image src={image} height={180} alt={title} />
+            <Image src={image} width={300} height={180} alt={title} />
             <Stack className={classes.stack}>
                 <Text className={classes.date}>{moment(published_datetime_utc).format('ddd DD MMM YYYY')}</Text>
                 <Text className={classes.title+" "+SFProRounded.className}>{title}</Text>

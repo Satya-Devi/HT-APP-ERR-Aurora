@@ -1,0 +1,35 @@
+/* components/FloatingButton.module.css */
+.floatingButton {
+    position: fixed;
+    right: 0;
+    top: 348px;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #0281FF;
+    padding: 16px 12px;
+    color: white;
+    border-radius: 4px 0 0 4px;
+    transition: background-color 0.3s;
+    text-decoration: none;
+  }
+  
+  .floatingButton:hover {
+    background-color: #004A93; /* Hover effect */
+  }
+  
+  .textVertical {
+    font-weight: 500;
+    margin-bottom: 5px;
+    font-size: 14px;
+    line-height: 1;
+    transform: rotate(180deg);
+    writing-mode: vertical-lr;
+  }
+  
+  .icon {
+    flex-shrink: 0;
+  }
+  

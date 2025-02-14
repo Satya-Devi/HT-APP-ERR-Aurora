@@ -32,7 +32,7 @@ export default function ForgotPassword() {
       setErrorM(false);
     })
     .catch((error) => {
-      console.log(error);
+      console.log("errr",error);
     });
   };
 

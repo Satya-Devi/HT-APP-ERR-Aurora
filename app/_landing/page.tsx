@@ -7,7 +7,6 @@ import PartnerCarousel from "@/components/PartnerCarousel/PartnerCarousel";
 import SucceedSection from "@/components/SucceedSection/SucceedSection";
 import Testimonials from "@/components/Testimonials/Testimonials";
 import { createClient } from "@/utils/supabase/server";
-import Head from "next/head";
 
 export default async function Landing() {
   const supabase = createClient();

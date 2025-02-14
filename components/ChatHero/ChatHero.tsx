@@ -42,7 +42,7 @@ export default function ChatHero() {
       mx="xl"
       style={{
         borderRadius: "10px",
-        backgroundImage: "url('/images/hero.png')",
+        backgroundImage: "url('/images/hero.webp')",
         backgroundSize: "cover",
         backgroundPosition: "center right",
         padding: isMobile ? "20px 20px" : "60px 60px",

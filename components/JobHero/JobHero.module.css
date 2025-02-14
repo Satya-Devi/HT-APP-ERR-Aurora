@@ -1,6 +1,6 @@
 .container{
     /* background: radial-gradient(50.76% 134.05% at 50% 100%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%),linear-gradient(180deg, #0281FF 0%, #3BADFF 100%); */
-    background-image: url(/images/hero/app_hero.png);
+    background-image: url(/images/hero/app_hero.webp);
     padding: 40px 40px;
     background-size: cover;
   background-position: center;

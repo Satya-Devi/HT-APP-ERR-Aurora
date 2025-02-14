@@ -1,3 +1,6 @@
+body{
+  font-display: swap;
+}
 .slick-list {
     padding: 0 !important;  /* Resets the padding of the slick list */
 }
@@ -5,6 +8,18 @@
 .slick-slide {
   padding: 0 !important;  /* Resets the padding of each slick slide */
 }
+.hide-scrollbar {
+  scrollbar-width: none; /* For Firefox */
+  -ms-overflow-style: none; /* For Internet Explorer and Edge */
+}
+
+::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Edge */
+}
+.subscription_box{
+  margin-top: 95px;
+}
+
 
 
  ::-webkit-scrollbar {
@@ -38,5 +53,23 @@
 }
 
 .jobs-table::-webkit-scrollbar {
-  /* Chrome, Safari and Opera */ display: "none",
+  /* Chrome, Safari and Opera */ display: "none"}
+
+@media (max-width: $mantine-breakpoint-xs) {
+  .hide-mobile {
+    display: none;
+  }
+
+}
+@media (max-width: 1120px) {
+
+  .subscription_box{
+    margin-top: 10px;
+  }
+}
+@media (max-width: 760px) {
+.hero_image{
+  height: 227px;
+}
+
 }

@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { Container, Text,Image, Box, Button} from "@mantine/core";
+import { Container, Text, Box, Button} from "@mantine/core";
 import classes from "./PartnerCarousel.module.css";
 import Slider from "react-slick";
 import partnerData from '@/partners.json';
 import { SFProRounded } from "@/app/layout";
 import { IconChevronRight } from "@tabler/icons-react";
+import Image from "next/image";
 
 const settings = {
     dots: false,
@@ -40,7 +41,7 @@ const PartnerCarousel =() => {
                 <Slider {...settings}>
                     {partnerData.filter((partner:any)=>partner?.content?.logo?.filename).map((partner:any,index) => (
                         <Box p={2} key={index} style={{justifyContent:'center',alignItems:'center',pointerEvents:'none'}} mx={15} w={120} h={90}>
-                        <Image className={classes.partner_image} src={partner?.content?.logo?.filename} alt={partner.name} />
+                        <Image height={85} width={105} className={classes.partner_image} src={partner?.content?.logo?.filename} alt={partner.name} />
                         </Box>
                     ))}
                 </Slider>

@@ -1,0 +1,8 @@
+# Allow all bots to crawl everything
+User-agent: *
+Allow: /
+Disallow:
+
+# Block specific directories (e.g., API routes or private pages)
+Disallow: /api/
+

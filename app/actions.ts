@@ -14,6 +14,9 @@ export async function fetchNews() {
     headers: {
       "x-rapidapi-key": process.env.NEWS_API_KEY as string,
       "x-rapidapi-host": "real-time-news-data.p.rapidapi.com",
+      "Cache-Control": "public, max-age=60, immutable",
+      "Pragma": "no-cache",
+      "Expires": "0",
     },
   };
 
@@ -34,6 +37,9 @@ export async function fetchTopNews() {
     headers: {
       "x-rapidapi-key": process.env.NEWS_API_KEY as string,
       "x-rapidapi-host": "real-time-news-data.p.rapidapi.com",
+      "Cache-Control": "public, max-age=60, immutable",
+      "Pragma": "no-cache",
+      "Expires": "0",
     },
   };
 
@@ -96,7 +102,9 @@ export async function fetchJobs({
   page,
   itemsPerPage,
   tab,
-  filter
+  filter,
+  frequency,
+  category,
 }: {
   query: string;
   location: string;
@@ -109,23 +117,29 @@ export async function fetchJobs({
   itemsPerPage: number;
   tab: string;
   filter: string;
+  frequency?: string;
+  category?: string;
 }) {
   const supabase = createClient();
-  let function_name: "fetch_jobs_v5" | "fetch_hot_job_v2" | "fetch_latest_jobs_v3" = "fetch_jobs_v5";
+  let function_name:
+    | "fetch_jobs_v5"
+    | "fetch_hot_job_v2"
+    | "fetch_latest_jobs_v3" = "fetch_jobs_v5";
   let db_query: {
-    p_query: string,
-    p_location: string,
-    p_company: string,
-    p_remote: string,
-    p_include_fulltime: boolean,
-    p_include_contractor: boolean,
-    p_speciality: string,
-    p_page: number,
-    p_items_per_page: number,
-    p_created_at?: string
-    p_solution_area?: string
+    p_query?: string;
+    p_location: string;
+    p_company: string;
+    p_remote: string;
+    p_include_fulltime: boolean;
+    p_include_contractor: boolean;
+    p_speciality: string;
+    p_page: number;
+    p_items_per_page: number;
+    p_created_at?: string;
+    p_solution_area?: string;
+    p_include_job_title?: string;
   } = {
-    p_query: query,
+    p_query: query || category,
     p_location: location,
     p_company: company,
     p_remote: remote,
@@ -134,28 +148,50 @@ export async function fetchJobs({
     p_speciality: speciality,
     p_page: page,
     p_items_per_page: itemsPerPage,
-    p_solution_area: filter
-  }
-  if(tab==='hot-jobs'){
-    let last8Days = moment().subtract(8, 'days');
+    p_solution_area: filter,
+  };
+
+  // Adjust `p_created_at` based on tab or frequency
+  let lastDate;
+  if (tab === "hot-jobs") {
+    lastDate = moment().subtract(8, "days");
     function_name = "fetch_hot_job_v2";
-    db_query.p_created_at=last8Days.toISOString();
-  }else if(tab==='latest-jobs'){
+  } else if (tab === "latest-jobs") {
     function_name = "fetch_latest_jobs_v3";
   }
-  console.log(function_name, db_query)
-  const { data, error } = await supabase.rpc(function_name, db_query).order("job_data->created_at", { ascending: false }); 
+
+  if (frequency === "Weekly") {
+    lastDate = moment().subtract(7, "days");
+  } else if (frequency === "Monthly") {
+    lastDate = moment().subtract(1, "month");
+  }
+
+  if (lastDate) {
+    db_query.p_created_at = lastDate.toISOString();
+  }
+
+  // Add category to job title filter if provided
+
+  console.log("Query params:", function_name, db_query);
+
+  // Fetch jobs
+  const { data, error } = await supabase
+    .rpc(function_name, db_query)
+    .order("job_data->created_at", { ascending: false });
+
   if (error) {
     console.error("Error fetching jobs:", error);
     return { error: "Error fetching jobs", jobs: null, count: 0 };
   }
 
-  const jobs = data?.map((item:any) => item.job_data);
+  const jobs = data?.map((item: any) => item.job_data);
   const count = data?.[0]?.total_count || 0;
+
   type Job = Tables<"jobs">;
 
   return { jobs: jobs as Job[], count };
 }
+
 
 export async function fetchAllLocations() {
   const supabase = createClient();

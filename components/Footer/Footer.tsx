@@ -39,10 +39,11 @@ export default function Footer() {
               />
             </Link> */}
             <Link href="https://x.com/BeAHappyTechie" target="_blank" className={classes.socialLink} title="Stay Updated with Happy Techies on Twitter">
-              <img
+              <Image
                 src="/images/twitter-icon.png"
                 alt="Twitter"
                 height={32}
+                width={32}
                 className={classes.socialIcon}
               />
             </Link>
@@ -56,18 +57,20 @@ export default function Footer() {
               />
             </Link> */}
             <Link href="https://www.linkedin.com/company/happy-techies/" target="_blank" className={classes.socialLink} title="Connect with Happy Techies on LinkedIn">
-              <img
+              <Image
                 src="/images/linkedin-icon.png"
                 alt="LinkedIn"
                 height={32}
+                width={32}
                 className={classes.socialIcon}
               />
             </Link>
             <Link href="https://www.youtube.com/@HappyTechiesMedia" style={{marginLeft:-5}} target="_blank" className={classes.socialLink} title="Subscribe to Happy Techies on YouTube">
-              <img
+              <Image
                 src="/images/youtube-icon.png"
                 alt="YouTube"
                 height={32}
+                width={32}
                 className={classes.socialIcon}
               />
             </Link>

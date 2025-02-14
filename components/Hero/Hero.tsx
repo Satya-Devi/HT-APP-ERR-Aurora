@@ -30,12 +30,12 @@ export function Hero({
   employer_logo = "",
   titleStyles = {},
   subtitleStyles = {},
-  titleClass,
+  titleClass = "",
   backButtonStyles = {},
 }: HeroProps) {
   const containerClass = isHome ? classes.heroWrapper : classes.wrapper;
 
-  console.log(titleClass);
+  console.log("titleclass",titleClass);
 
   return (
     <Container

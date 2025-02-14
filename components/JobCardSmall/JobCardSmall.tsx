@@ -193,7 +193,7 @@ const JobCardSmall = ({
                   height={56}
                 />
               </Box>
-              <Text className={classes.job_title}>{job.job_title}</Text>
+              <Text component="h2" className={classes.job_title}>{job.job_title}</Text>
               <Box style={{ width: 13, height: 17 }}>
                 {!isMobile && isHotJob() && (
                   <Image
@@ -251,15 +251,17 @@ const JobCardSmall = ({
             </Group>
 
             <Group mt="16px" align="center" justify="space-between">
-              <Group>
-                <Text className={classes.company_info_text}>
+              <Group align="center">
+                <Text component="h3" className={classes.company_info_text}>
                   {job.company_name}
-                  {!job.job_location?.includes("null") ? (
+                 
+                </Text>
+                <Text component="h4" className={classes.company_info_text}>
+                {!job.job_location?.includes("null") ? (
                     <>
                       <IconMapPin
                         style={{
                           marginRight: "2.6px",
-                          marginLeft: "11px",
                           marginTop: "0px",
                           marginBottom: "0px",
                         }}
@@ -269,7 +271,8 @@ const JobCardSmall = ({
                       {job.job_location}
                     </>
                   ) : null}
-                </Text>
+                   </Text>
+                  
               </Group>
               <Container className={classes.badge_wrapper}>
                 {job.skills?.slice(0, 3)?.map((skill, index) => (

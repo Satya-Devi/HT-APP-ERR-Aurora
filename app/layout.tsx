@@ -21,14 +21,14 @@ import { Suspense } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "./global.css";
+import JobAlerts from "@/components/JobAlerts/JobAlerts";
+import { JobEmailTemplate } from "@/templates/emails/jobAlertEmail";
+import { Template } from "@/templates/emails/confirmation";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
-console.log("Access Token",process.env.STORYBLOK_ACCESS_TOKEN)
-// console.log("Access Token",process.env.NEXT_PUBLIC_STORYBLOK_ACCESS_TOKEN)
 
-// if(process.env.STORYBLOK_ACCESS_TOKEN){
 storyblokInit({
   accessToken: process.env.STORYBLOK_ACCESS_TOKEN,
   use: [apiPlugin],
@@ -39,7 +39,6 @@ storyblokInit({
     grid: Grid,
   },
 });
-// }
 
 // export const metadata = {
 //   metadataBase: new URL(defaultUrl),
@@ -93,7 +92,7 @@ export default function RootLayout({
         {/* <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="923582d5-3ef7-4a94-90bf-5d69b65ae7bb"  type="text/javascript"></script> */}
         {/* <script  src="https://cmp.osano.com/16BafyUO4SDUd2hps/7f1fb6ba-35ea-4e82-8e2b-7c483cffbca3/osano.js"></script> */}
       </head>
-      <body style={{ backgroundColor: "#f3f9ff" }}>
+      <body style={{ backgroundColor: "#f3f9ff" }} className="hide-scrollbar" >
         <Suspense>
           <Firebase />
         </Suspense>
@@ -103,7 +102,31 @@ export default function RootLayout({
           }}
         >
           <Notifications />
+          <JobAlerts/>
+            {/* <JobEmailTemplate jobs={
+        [
+          {
+            job_title:"AI Data Science",
+            company_name:"Infosys",
+            job_location:"india",
+            created_at:new Date()
+
+          },
+          {
+            job_title:"ABC",
+            company_name:"ABC",
+            job_location:"india"
+
+          },
+        ] 
+      } 
+      alert={
+        {job_category:"abc",email:"abc"}
+      }
+      /> */}
+      {/* <Template data={{frequency:null ,job_category:null}} /> */}
           <main>{children}</main>
+    
           <Footer />
         </MantineProvider>
       </body>

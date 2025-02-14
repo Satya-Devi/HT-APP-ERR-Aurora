@@ -21,6 +21,7 @@ import JobCardSmall from "@/components/JobCardSmall/JobCardSmall";
 import Head from "next/head";
 
 import classes from "./tracker.module.css";
+import SubscriptionCard from "./subscribeBox";
 
 export default async function Page({
   searchParams,
@@ -66,7 +67,7 @@ export default async function Page({
         />
       </head> */}
       <Hero title="My Dashboard" subtitle="" align="center" />
-      {/* <Container style={{ width: "100%" }} ml="30px"> */}
+      <Container style={{ maxWidth: "100%" }} m="0">
       <div>
         <Grid gutter="xs">
           <GridCol span={{ base: 12, md: 6 }}>
@@ -130,13 +131,16 @@ export default async function Page({
           </GridCol>
           <GridCol span={{ base: 12, md: 1 }}></GridCol>
           <GridCol span={{ base: 12, md: 3 }}>
+            <div className="subscription_box">
+           <SubscriptionCard/>
+            </div>
             <CardAICTA />
             <CardContentCTA />
           </GridCol>
-          {/* <GridCol span={{ base: 12, md: 1 }}></GridCol> */}
+          <GridCol span={{ base: 12, md: 1 }}></GridCol>
         </Grid>
       </div>
-      {/* </Container> */}
+      </Container>
     </>
   );
 }

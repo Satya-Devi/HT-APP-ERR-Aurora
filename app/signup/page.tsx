@@ -110,7 +110,7 @@ export default function Signup({
     ]);
 
     if(insertError) {
-      return console.log(insertError);
+      return console.log("insererr",insertError);
     }
 
     return redirect("/login?message=Check email to continue sign in process");

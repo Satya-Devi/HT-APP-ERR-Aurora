@@ -2,7 +2,7 @@
 import { Box, Button } from "@mantine/core";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import classes from "./JobTabs.module.css";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { IconFlame } from "@tabler/icons-react";
 import { FaClockRotateLeft } from "react-icons/fa6";
 
@@ -20,40 +20,59 @@ const JobTabs = () => {
             return "latest-jobs";
         }
         return "hot-jobs";
-    }, [searchParams, pathname]);
+    }, [searchParams]);
 
     useEffect(() => {
         setClickedTab("");
     }, [activeTab]);
 
-    const handleClick = (tab: string) => {
+    const handleClick = useCallback((tab: string) => {
         const params = new URLSearchParams(searchParams);
         setClickedTab(tab);
-        if (tab) {
-            params.set("tab", tab);
-        } else {
-            params.delete("tab");
-        }
-        params.delete("page");
-        replace(`${pathname}?${params.toString()}`);
-    }
+        
+        // Move URL updates to a microtask to avoid render phase updates
+        queueMicrotask(() => {
+            if (tab) {
+                params.set("tab", tab);
+            } else {
+                params.delete("tab");
+            }
+            params.delete("page");
+            replace(`${pathname}?${params.toString()}`);
+        });
+    }, [pathname, searchParams, replace]);
 
     return (
         <Box className={classes.container}>
-            <Button variant="transparent"
-                className={classes.tabs + " " + (activeTab=="hot-jobs" ? classes.active : '')}
-                onClick={() => handleClick("hot-jobs")}>
-              {clickedTab=='hot-jobs'?"Loading...":<><IconFlame size="1rem" color="#E46137" style={{marginRight:5}}/> Hottest Jobs</>}
+            <Button 
+                variant="transparent"
+                className={classes.tabs + " " + (activeTab==="hot-jobs" ? classes.active : '')}
+                onClick={() => handleClick("hot-jobs")}
+                disabled={clickedTab === 'hot-jobs'}
+            >
+                {clickedTab==='hot-jobs' ? 
+                    "Loading..." : 
+                    <><IconFlame size="1rem" color="#E46137" style={{marginRight:5}}/> Hottest Jobs</>
+                }
             </Button>
-            <Button variant="transparent" 
-               className={classes.tabs + " " + (activeTab=="latest-jobs" ? classes.active : '')} 
-               onClick={() => handleClick("latest-jobs")}>
-                {clickedTab=="latest-jobs"?"Loading...":<><FaClockRotateLeft size="1rem" color="##004A93" style={{marginRight:8}}/> Latest Jobs</>}
+            <Button 
+                variant="transparent"
+                className={classes.tabs + " " + (activeTab==="latest-jobs" ? classes.active : '')}
+                onClick={() => handleClick("latest-jobs")}
+                disabled={clickedTab === 'latest-jobs'}
+            >
+                {clickedTab==="latest-jobs" ? 
+                    "Loading..." : 
+                    <><FaClockRotateLeft size="1rem" color="##004A93" style={{marginRight:8}}/> Latest Jobs</>
+                }
             </Button>
-            <Button variant="transparent" 
-               className={classes.tabs+ " " + (activeTab=="all-jobs" ? classes.active : '')} 
-               onClick={() => handleClick("all-jobs")}>
-                {clickedTab=="all-jobs"?"Loading...":"All Jobs"}
+            <Button 
+                variant="transparent"
+                className={classes.tabs + " " + (activeTab==="all-jobs" ? classes.active : '')}
+                onClick={() => handleClick("all-jobs")}
+                disabled={clickedTab === 'all-jobs'}
+            >
+                {clickedTab==="all-jobs" ? "Loading..." : "All Jobs"}
             </Button>
         </Box>
     );
