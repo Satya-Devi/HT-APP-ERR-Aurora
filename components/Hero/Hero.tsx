@@ -35,7 +35,7 @@ export function Hero({
 }: HeroProps) {
   const containerClass = isHome ? classes.heroWrapper : classes.wrapper;
 
-  console.log("titleclass",titleClass);
+  console.log(titleClass);
 
   return (
     <Container

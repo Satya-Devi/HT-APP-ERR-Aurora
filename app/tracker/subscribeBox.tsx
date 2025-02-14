@@ -29,7 +29,7 @@ function SubscriptionCard() {
   const fetchAlerts = async () => {
    
     const response: any = await getJobAlert()
-    console.log("response",response);
+    console.log(response);
     setSubscriptions(response?.data)
   }
   const handleDelete = async (id: number) => {

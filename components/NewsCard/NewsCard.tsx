@@ -17,9 +17,10 @@ const NewsCard = ({ title, description, image, url ,published_datetime_utc }: Ne
     const handleClick=()=>{
         window.open(url);
     }
+
     return (
         <Card onClick={handleClick} className={classes.card}>
-            <Image src={image} width={300} height={180} alt={title} />
+            <Image src={image || ""} width={300} height={180} alt={title} />
             <Stack className={classes.stack}>
                 <Text className={classes.date}>{moment(published_datetime_utc).format('ddd DD MMM YYYY')}</Text>
                 <Text className={classes.title+" "+SFProRounded.className}>{title}</Text>

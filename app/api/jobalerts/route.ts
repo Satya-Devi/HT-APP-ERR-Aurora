@@ -17,7 +17,7 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
   try {
     const { searchParams } = new URL(request.url);
     const frequency = searchParams.get("frequency") as "Weekly" | "Monthly";
-    console.log("frequency",frequency);
+    console.log(frequency);
     if (!frequency || !["Weekly", "Monthly"].includes(frequency)) {
       return NextResponse.json(
         { error: "Invalid or missing frequency parameter" },
@@ -63,7 +63,7 @@ export const GET = async (request: NextRequest): Promise<NextResponse> => {
       }
 
       if (jobs && jobs.length > 0) {
-        console.log("jobs",jobs);
+        console.log(jobs);
 
         const rsp = await resend.emails.send({
           // from: "info@quickrecord.in",
