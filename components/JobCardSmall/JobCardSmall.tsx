@@ -283,13 +283,13 @@ const JobCardSmall = ({
                     mx={4}
                     color="#004A93"
                   >
-                    {skill}
+                    {skill || "N/A"}
                   </Badge>
                 ))}
               </Container>
             </Group>
             <Text className={classes.description}>
-              {job.brief_summary || job.job_description}
+              {job.brief_summary || job.job_description || "N/A"}
             </Text>
           </Card>
       )}

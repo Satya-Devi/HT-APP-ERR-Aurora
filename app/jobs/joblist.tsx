@@ -26,6 +26,7 @@ type JobListProps = {
   page: number;
   itemsPerPage: number;
   user: User | null;
+  params?:any
 };
 
 export async function JobList({
@@ -33,9 +34,9 @@ export async function JobList({
   page,
   itemsPerPage,
   user,
-
+  params,
 }: JobListProps) {
-try{
+
     const { jobs, error, count } = await fetchJobs({
       query: searchParams?.query || "",
       location: searchParams?.location || "",
@@ -48,9 +49,11 @@ try{
       itemsPerPage,
       tab: searchParams?.tab || "hot-jobs",
       filter: searchParams?.filter || "",
+      frequency:searchParams?.frequency ||"",
+    category:params?.category?.replace(/-/g, " ") || ""
     });
     // const router = useRouter()
-
+console.log("jjjjj",jobs,error,count)
     const title = (
       // <Title
       //   order={1}
@@ -101,26 +104,10 @@ try{
           </Group>
         </Container>
 
-        {jobs?.length === 0 && (
-          <Container fluid my="xs" className={SFProRounded.className}>
-            <Paper p={30} mt={30} radius="md">
-              <Title ta="center" order={3} className={SFProRounded.className}>
-                No data found
-              </Title>
-              <Text
-                c="dimmed"
-                size="lg"
-                ta="center"
-                mt={5}
-                className={SFProRounded.className}
-              >
-                No jobs found for your search query.
-              </Text>
-            </Paper>
-          </Container>
-        )}
+       
 
-        {jobs && jobs?.length > 0 && jobs?.map((job) => (
+        {(jobs && jobs?.length > 0) ? 
+        jobs?.map((job) => (
           <Container
             px={0}
             my="sm"
@@ -137,22 +124,28 @@ try{
               <JobCardSmall userId={user?.id} job={job} key={job.id} />
             </Link>
           </Container>
-        ))}
+        )):
+        <Container fluid my="xs" className={SFProRounded.className}>
+            <Paper p={30} mt={30} radius="md">
+              <Title ta="center" order={3} className={SFProRounded.className}>
+                No data found
+              </Title>
+              <Text
+                c="dimmed"
+                size="lg"
+                ta="center"
+                mt={5}
+                className={SFProRounded.className}
+              >
+                No jobs found for your search query.
+              </Text>
+            </Paper>
+          </Container>
+      }
 
         <PaginatedSearch total={count || 0} itemsPerPage={itemsPerPage} />
       </>
     );
   }
-  catch (error) {
-    console.error("Error in JobList:", error);
-    return (
-      <Container>
-        <Group justify="center">
-          <Text c="dimmed" size="lg" fw={500} ta="center">
-            An error occurred. Please try again.
-          </Text>
-        </Group>
-      </Container>
-    );
-  }
-}
+  
+

@@ -53,24 +53,16 @@ export async function fetchTopNews() {
 }
 
 export async function fetchGlassdoorRating(companyId: string) {
-  // Handle missing company ID
-  if (!companyId) {
-    return {
-      rating: "N/A",
-      status: "success"
-    };
-  }
+  const url = `https://real-time-glassdoor-data.p.rapidapi.com/company-overview?company_id=${companyId}`;
+  const options = {
+    method: "GET",
+    headers: {
+      "x-rapidapi-key": process.env.GLASSDOOR_API_KEY as string,
+      "x-rapidapi-host": "real-time-glassdoor-data.p.rapidapi.com",
+    },
+  };
 
   try {
-    const url = `https://real-time-glassdoor-data.p.rapidapi.com/company-overview?company_id=${companyId}`;
-    const options = {
-      method: "GET",
-      headers: {
-        "x-rapidapi-key": process.env.GLASSDOOR_API_KEY as string,
-        "x-rapidapi-host": "real-time-glassdoor-data.p.rapidapi.com",
-      }
-    };
-
     const response = await fetch(url, options);
     const result = await response.json();
     
